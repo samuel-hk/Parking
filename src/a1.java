@@ -64,7 +64,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private JButton loginButton;
 	public static HashMap<String,HashMap> studentMap = new HashMap<String,HashMap>();
 	JPanel p1;
-	JPanel subscriptionPane;
 	JTabbedPane p2;
 	JLabel parkingTitle;
 	JLabel yorkLogoLabel;
@@ -84,14 +83,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	
 	//ImageIcon yorkLogoLabelEmailPage = new ImageIcon("images/title.jpg");
 	JLabel yorkLogoLabelEmailPage;
-	JPanel vehiclePane;
 	JLabel displayName;
 	String displayNameString;
 	String studentNumber;
 	
 	
 	//---------------------Subscription---------------------
-			
+	
+	JPanel subscriptionPane;
 	JLabel emailLabel;
 	JTextField emailInput;
 	JButton nextOnSubscription;
@@ -99,6 +98,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JPanel buttonPanelOnSubscription;
 			
 	//------------------------------------------------------
+	
+	//---------------------Vehicle Information---------------------
+	
+	JPanel vehiclePane;
+	
+	//-------------------------------------------------------------
 	
 	// keyboard panels
 	private JPanel numKeyboardPanel;
@@ -155,6 +160,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		focusTextLimit.put(PINInput, PINLIMIT);
 		focusTextLimit.put(studentNumberInput, STUDENTLIMIT);
 		
+		
+		//---------------------Login---------------------		
 		// set up signal labels
 		int fontSize =30;
 		studentNumberLabel = new JLabel("Student Number: ");
@@ -213,7 +220,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		inputPanel.setBackground(Color.white);
 		loginPane.add(inputPanel);
 		
-		//main panel for login page
 		p1 = new JPanel();
 		p1.setBackground(Color.white);
 		p1.setPreferredSize(new Dimension(1200,700));
@@ -229,11 +235,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		p1.add(numKeyboardPanel);
 		
 		this.setContentPane(p1);
+		//------------------------------------------------------
 		
+		//---------------------Subscription---------------------
 		yorkLogoLabelEmailPage = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
-
-		
-		//Subscription Panel
 		subscriptionPane = new JPanel();
 		subscriptionPane.setBackground(Color.white);
 		subscriptionPane.setLayout(new GridLayout(5,1));
@@ -241,8 +246,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		displayName = new JLabel(displayNameString);
 		
-		
-		//---------------------Subscription---------------------
 		subscriptionPane.add(yorkLogoLabelEmailPage);
 		subscriptionPane.add(displayName);
 		
@@ -251,6 +254,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		emailInputPanel.setLayout(new GridLayout(2,1));
 		emailLabel = new JLabel("Would you like to receive parking news at york?\nPlease enter your Email(Optional): ");
 		emailInput = new JTextField(25);
+		emailInput.addActionListener(this);
 		emailInputPanel.add(emailLabel);
 		emailInputPanel.add(emailInput);
 		
@@ -258,6 +262,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		buttonPanelOnSubscription.setBackground(Color.white);
 		next.getImage().getScaledInstance(280, 116, Image.SCALE_SMOOTH);
 		nextOnSubscription = new JButton(next);
+		nextOnSubscription.addActionListener(this);
 		nextOnSubscription.setBorder(BorderFactory.createEmptyBorder());
 		buttonPanelOnSubscription.add(nextOnSubscription);
 
@@ -273,11 +278,19 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		
 		//------------------------------------------------------
-
 		
+		
+		//---------------------Vehicle Information---------------------
 		
 		vehiclePane = new JPanel();
 		vehiclePane.setPreferredSize(new Dimension(1200,700));
+		vehiclePane.setBackground(Color.white);
+		
+		
+		//-------------------------------------------------------------
+
+		
+		
 		
 		
 		p2 = new JTabbedPane();
@@ -285,6 +298,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		p2.setPreferredSize(new Dimension(1200,700));
 		p2.addTab("Subscribe", subscriptionPane);
 		p2.addTab("Vehicle Information",vehiclePane);
+		
 		
 		
 		
@@ -346,6 +360,21 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 //				JOptionPane.showMessageDialog(null, PINInput.getText(), "TITLE", JOptionPane.PLAIN_MESSAGE);
 			}
 			
+		}
+		else if(ae.getSource().equals(nextOnSubscription))
+		{
+			if(emailValid(emailInput.getText()))
+			{
+				remove(subscriptionPane);
+				setContentPane(vehiclePane);
+
+				this.pack();
+				
+			}
+			else
+			{
+				
+			}
 		}
 		
 		
@@ -532,6 +561,27 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		
 	} // end method setupLetterKeyboard
+	
+	public static boolean emailValid(String emailInput)
+	{
+		Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Matcher matcher = pattern.matcher(emailInput.trim());
+		if(emailInput.isEmpty())
+		{
+			System.out.println("Email Empty: true");
+			return true;
+		}
+		else if(matcher.matches())
+		{
+			System.out.println("Email maches: true");
+			return true;
+		}
+		else
+		{
+			System.out.println("Email Input Error");
+			return false;
+		}
+	}
 
 
 
