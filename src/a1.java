@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +51,7 @@ public class a1
 	
 }
 
-class ParkingPermitKioskFrame extends JFrame implements ActionListener
+class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusListener
 {
 	private JLabel studentNumberLabel;
 	JTextField studentNumberInput;
@@ -66,6 +69,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 	
 	private JPanel numKeyboardPanel;
 	
+	// to save the current focus input field
+	private JTextField focusText;
+	private Map<JTextField, Integer> focusTextLimit;
+	
+	private Map<JButton, String> allKeyboardButtonMap;
+	
 	public ParkingPermitKioskFrame()
 	{
 		// input field properties
@@ -76,6 +85,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		studentNumberInput = new JTextField(9);
 		studentNumberInput.addActionListener(this);
 		studentNumberInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
+		studentNumberInput.addFocusListener(this);
 		
 		// limit student input to 4 digits
 		final int STUDENTLIMIT= 9;
@@ -92,6 +102,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		PINInput = new JTextField(4);
 		PINInput.addActionListener(this);
 		PINInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
+		PINInput.addFocusListener(this);
 		
 		// limit PIN input to 4 digits
 		final int PINLIMIT = 4;
@@ -104,6 +115,11 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 			}
 		});
 		
+		// set up limit of each text field
+		focusTextLimit = new HashMap<>();
+		focusTextLimit.put(PINInput, PINLIMIT);
+		focusTextLimit.put(studentNumberInput, STUDENTLIMIT);
+		
 		// set up signal labels
 		int fontSize =30;
 		studentNumberLabel = new JLabel("Student Number: ");
@@ -113,7 +129,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		incorrectLogin = new JLabel("Student Number or PIN Incorrect");
 		incorrectLogin.setVisible(false);
 		
-		//read login button image and set it as button
+		// read login button image and set it as button
 		loginButton = new JButton(login);
 		
 		
@@ -151,35 +167,31 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		
 		JPanel inputPanel = new JPanel(new GridLayout(2, 4));
 
-		inputPanel.add(new JLabel(""));
-		
+		inputPanel.add(new JLabel("")); // placeholder to position other elements
 		inputPanel.add(studentNumberLabel);
 		inputPanel.add(studentNumberInput);
-
-		inputPanel.add(new JLabel(""));
-		inputPanel.add(new JLabel(""));
-		
+		inputPanel.add(new JLabel("")); // placeholder to position other elements
+		inputPanel.add(new JLabel("")); // placeholder to position other elements
 		inputPanel.add(PINLabel);
 		inputPanel.add(PINInput);
-		
-		inputPanel.add(new JLabel(""));
-		
+		inputPanel.add(new JLabel("")); // placeholder to position other elements
 		inputPanel.setBackground(Color.white);
 		loginPane.add(inputPanel);
-
-		//
 		
 		//main panel for login page
 		p1 = new JPanel();
 		p1.setBackground(Color.white);
 		p1.setPreferredSize(new Dimension(1200,700));
 		p1.setMaximumSize(new Dimension(1200,700));
-		p1.setLayout(new GridLayout(4,1));
+		p1.setLayout(new GridLayout(5,1));
+		
+		setupNumKeyboard();
 		
 		p1.add(logoPane);
 		p1.add(loginPane);
 		p1.add(incorrectLogin);
 		p1.add(loginButton);
+		p1.add(numKeyboardPanel);
 		
 		this.setContentPane(p1);
 		
@@ -189,14 +201,39 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		
 		
 		
-	}
+	} // end constructor
 
 	@Override
 	public void actionPerformed(ActionEvent ae) 
 	{
 		// TODO Auto-generated method stub
 		
-		if(ae.getSource().equals(loginButton))
+		// number keyboard press
+		String str = allKeyboardButtonMap.get(ae.getSource());
+		if ( str != null)
+		{
+//			JOptionPane.showMessageDialog(null, allKeyboardButtonMap.get(ae.getSource()), "TITLE", JOptionPane.PLAIN_MESSAGE);
+			String focusTextValue = focusText.getText();
+			int focusTextLength = focusTextValue.length();
+			
+			// Backspace button
+			if (str.equals("Bk"))
+			{
+				// only backspace when there is text
+				if (focusTextLength > 0)
+				{
+					String text = focusTextValue.substring(0, focusTextLength - 1);
+					focusText.setText(text);					
+				} // end if, backspace only when there is text
+				
+			} // end if, backspace button
+			
+			// add digit
+			else if (focusText != null && focusTextLength < focusTextLimit.get(focusText) )
+				focusText.setText(focusTextValue + str);
+		}
+		// login button press
+		else if(ae.getSource().equals(loginButton))
 		{
 			readStudentDatabase();
 			if(studentNumberInDatabase(studentNumberInput.getText())&&studentNumberAndPINMatches(studentNumberInput.getText(),PINInput.getText()))
@@ -290,5 +327,55 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 			System.out.println("studentNumberAndPINMatches: false");
 			return false;
 		}
+	}
+	
+	private void setupNumKeyboard()
+	{
+		
+		// define properties of keyboard 
+		final int ROW = 4;
+		final int COL = 3;
+		
+		// define keyboard data
+		String[] num = {"1", "2", "3", "4", "5", "6","7", "8", "9", "BOX", "0", "Bk"};
+
+		// define keyboard
+		numKeyboardPanel = new JPanel(new GridLayout(ROW, COL));
+		
+		// create map to hold keyboad data
+		allKeyboardButtonMap = new HashMap<>();
+
+		for (int i = 0 ; i < num.length; i++)
+		{
+			JButton b = new JButton(num[i]);
+			numKeyboardPanel.add(b);
+			
+			// create empty box to position 90 in middle
+			if (num[i].equals("BOX"))
+			{
+				b.setEnabled(false);
+				b.setText("");
+			} // end if create empty box
+			
+			b.addActionListener(this);
+			
+			
+			allKeyboardButtonMap.put(b, num[i]);
+		} // end for add keys into keyboard
+		
+	} // end method setupNumKeyboard
+
+
+	@Override
+	public void focusGained(FocusEvent e) 
+	{
+		// TODO Auto-generated method stub
+		focusText = (JTextField) e.getSource();
+	} // end method focusGained
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
