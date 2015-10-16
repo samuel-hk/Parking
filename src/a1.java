@@ -78,7 +78,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	String displayNameString;
 	String studentNumber;
 	
+	// keyboard panels
 	private JPanel numKeyboardPanel;
+	private JPanel letterKeyboard;
 	
 	// to save the current focus input field
 	private JTextField focusText;
@@ -243,7 +245,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		
 	} // end constructor
-
+	
 	@Override
 	public void actionPerformed(ActionEvent ae) 
 	{
@@ -282,6 +284,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				studentNumber = studentNumberInput.getText();
 				remove(p1);
 				setContentPane(p2);
+				setupLetterKeyboard();
+				subscriptionPane.add(letterKeyboard);
 				this.pack();
 				
 				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName");
@@ -409,6 +413,83 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		} // end for add keys into keyboard
 		
 	} // end method setupNumKeyboard
+	
+	private void setupLetterKeyboard()
+	{
+		// define keyboard properties
+		int rowNum = 5;
+		
+		// keyboard data
+		String firstRow[] = {"~","1","2","3","4","5","6","7","8","9","0","-","+","BackSpace"};
+		String secondRow[] = {"Tab","Q","W","E","R","T","Y","U","I","O","P","[","]","\\"};
+		String thirdRow[] = {"A","S","D","F","G","H","J","K","L",":","\"","Enter"};
+		String fourthRow[] = {"Shift","Z","X","C","V","B","N","M",",",".","?"};
+		String fifthRow[]={" " ,"<" ,"\\/",">" };
+		
+		// main letter keyboard panel
+		letterKeyboard = new JPanel(new GridLayout(rowNum, 1));
+
+		// subpanel for letter keyboard for the last row
+		JPanel letterKeyboardPanel1 = new JPanel(new GridLayout(1, firstRow.length));
+		JPanel letterKeyboardPanel2 = new JPanel(new GridLayout(1, secondRow.length));
+		JPanel letterKeyboardPanel3 = new JPanel(new GridLayout(1, thirdRow.length));
+		JPanel letterKeyboardPanel4 = new JPanel(new GridLayout(1, fourthRow.length));
+		JPanel letterKeyboardPanel5 = new JPanel(new GridLayout(1, fifthRow.length));
+		
+		// add subpanels to main letter panel
+		letterKeyboard.add(letterKeyboardPanel1);
+		letterKeyboard.add(letterKeyboardPanel2);
+		letterKeyboard.add(letterKeyboardPanel3);
+		letterKeyboard.add(letterKeyboardPanel4);
+		letterKeyboard.add(letterKeyboardPanel5);
+		
+		for (int i = 0; i < firstRow.length; i++)
+		{
+			JButton button = new JButton(firstRow[i]);
+			letterKeyboardPanel1.add(button);
+			allKeyboardButtonMap.put(button, firstRow[i]);
+			button.addActionListener(this);
+		} // end for add first row
+		
+		// add second row keyboard
+		for (int i = 0; i < secondRow.length; i++)
+		{
+			JButton b = new JButton(secondRow[i]);
+			letterKeyboardPanel2.add(b);
+			allKeyboardButtonMap.put(b, secondRow[i]);
+			b.addActionListener(this);
+		} // end for add second row
+		
+		// add third row keyboard
+		for (int i = 0; i < thirdRow.length; i++)
+		{
+			JButton b = new JButton(thirdRow[i]);
+			letterKeyboardPanel3.add(b);
+			allKeyboardButtonMap.put(b, thirdRow[i]);
+			b.addActionListener(this);
+		} // end for add third row
+		
+		// add forth row keyboard
+		for (int i = 0; i < fourthRow.length; i++)
+		{
+			JButton b = new JButton(fourthRow[i]);
+			letterKeyboardPanel4.add(b);
+			allKeyboardButtonMap.put(b, fourthRow[i]);
+			b.addActionListener(this);
+		} // end for add 4th row
+		
+		// add 5th row keyboard
+		for (int i = 0; i < fifthRow.length; i++)
+		{
+			JButton b = new JButton(fifthRow[i]);
+			letterKeyboardPanel5.add(b);
+			allKeyboardButtonMap.put(b, fifthRow[i]);
+			b.addActionListener(this);
+		} // end for add 4th row
+		
+		
+	} // end method setupLetterKeyboard
+
 
 
 	@Override
