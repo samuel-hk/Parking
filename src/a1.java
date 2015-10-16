@@ -69,14 +69,36 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JLabel parkingTitle;
 	JLabel yorkLogoLabel;
 	JLabel incorrectLogin;
+	
+	
+	//---------------------Image Source---------------------
 	ImageIcon yorkLogo = new ImageIcon("images/title.jpg");
 	ImageIcon login = new ImageIcon("images/LOGIN.png");
+	ImageIcon next = new ImageIcon("images/NEXT.jpg");
+	ImageIcon previous = new ImageIcon("images/PREVIOUS.jpg");
+	//------------------------------------------------------
+	
+	
+	
+	
+	
 	//ImageIcon yorkLogoLabelEmailPage = new ImageIcon("images/title.jpg");
 	JLabel yorkLogoLabelEmailPage;
 	JPanel vehiclePane;
 	JLabel displayName;
 	String displayNameString;
 	String studentNumber;
+	
+	
+	//---------------------Subscription---------------------
+			
+	JLabel emailLabel;
+	JTextField emailInput;
+	JButton nextOnSubscription;
+	JPanel emailInputPanel;
+	JPanel buttonPanelOnSubscription;
+			
+	//------------------------------------------------------
 	
 	// keyboard panels
 	private JPanel numKeyboardPanel;
@@ -214,24 +236,44 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		//Subscription Panel
 		subscriptionPane = new JPanel();
 		subscriptionPane.setBackground(Color.white);
-		subscriptionPane.setLayout(new GridLayout(4,1));
+		subscriptionPane.setLayout(new GridLayout(5,1));
 		subscriptionPane.setPreferredSize(new Dimension(1200,700));
-		
-		
-
-		
-		
-		//System.out.println(ParkingPermitKioskFrame.studentMap.get("123456789").get("GivenName"));
-
 		
 		displayName = new JLabel(displayNameString);
 		
+		
+		//---------------------Subscription---------------------
 		subscriptionPane.add(yorkLogoLabelEmailPage);
 		subscriptionPane.add(displayName);
+		
+		emailInputPanel = new JPanel();
+		emailInputPanel.setBackground(Color.white);
+		emailInputPanel.setLayout(new GridLayout(2,1));
+		emailLabel = new JLabel("Would you like to receive parking news at york?\nPlease enter your Email(Optional): ");
+		emailInput = new JTextField(25);
+		emailInputPanel.add(emailLabel);
+		emailInputPanel.add(emailInput);
+		
+		buttonPanelOnSubscription = new JPanel();
+		buttonPanelOnSubscription.setBackground(Color.white);
+		next.getImage().getScaledInstance(280, 116, Image.SCALE_SMOOTH);
+		nextOnSubscription = new JButton(next);
+		nextOnSubscription.setBorder(BorderFactory.createEmptyBorder());
+		buttonPanelOnSubscription.add(nextOnSubscription);
+
+
+		
+		subscriptionPane.add(emailInputPanel);
 
 		// setup letter keyboard for subscription pane
 		setupLetterKeyboard();
 		subscriptionPane.add(letterKeyboard);
+		subscriptionPane.add(buttonPanelOnSubscription);
+		
+		
+		
+		//------------------------------------------------------
+
 		
 		
 		vehiclePane = new JPanel();
