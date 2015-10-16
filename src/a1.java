@@ -293,6 +293,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		emailInput.addActionListener(this);
 		emailInputPanel.add(emailLabel);
 		emailInputPanel.add(emailInput);
+		emailInput.addFocusListener(this);
 		incorrectEmailFormat = new JLabel("Please enter the correct Email format");
 		incorrectEmailFormat.setVisible(false);
 		emailInputPanel.add(incorrectEmailFormat);
@@ -417,6 +418,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 		// set up expiry date panel 
 		expiryDatePanel = new JPanel(new GridLayout(expiryDatePanelROW, 1));
+		expiryDatePanel.setBackground(Color.WHITE);
 
 		// set up today label
 		Date today = new Date();
@@ -484,8 +486,11 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 			} // end if, backspace button
 
-			// add digit
-			else if (focusText != null && focusTextLength < focusTextLimit.get(focusText) )
+			// add digit, only case for student number and pin
+			else if (focusText != null && focusTextLimit.get(focusText) != null && focusTextLength < focusTextLimit.get(focusText) )
+				focusText.setText(focusTextValue + str);
+			// add input to other letter fields
+			else
 				focusText.setText(focusTextValue + str);
 		}
 		// login button press
@@ -690,19 +695,21 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private void setupLetterKeyboard()
 	{
 		// define keyboard properties
-		int rowNum = 5;
+		int rowNum = 6;
 
 		// keyboard data
+		String zeroRow[] = {"`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+"};
 		String firstRow[] = {"~","1","2","3","4","5","6","7","8","9","0","-","+","BackSpace"};
-		String secondRow[] = {"Tab","Q","W","E","R","T","Y","U","I","O","P","[","]","\\"};
-		String thirdRow[] = {"A","S","D","F","G","H","J","K","L",":","\"","Enter"};
-		String fourthRow[] = {"Shift","Z","X","C","V","B","N","M",",",".","?"};
+		String secondRow[] = {"Q","W","E","R","T","Y","U","I","O","P","{", "}", "[","]","|", "\\"};
+		String thirdRow[] = {"A","S","D","F","G","H","J","K","L",";",":", "\'", "\"","Enter"};
+		String fourthRow[] = {"Z","X","C","V","B","N","M","<", ">",",",".", "/", "?"};
 		String fifthRow[]={" " ,"<" ,"\\/",">" };
 
 		// main letter keyboard panel
 		letterKeyboard = new JPanel(new GridLayout(rowNum, 1));
 
 		// subpanel for letter keyboard for the last row
+		JPanel letterKeyboardPanel0 = new JPanel(new GridLayout(1, zeroRow.length));
 		JPanel letterKeyboardPanel1 = new JPanel(new GridLayout(1, firstRow.length));
 		JPanel letterKeyboardPanel2 = new JPanel(new GridLayout(1, secondRow.length));
 		JPanel letterKeyboardPanel3 = new JPanel(new GridLayout(1, thirdRow.length));
@@ -710,12 +717,21 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		JPanel letterKeyboardPanel5 = new JPanel(new GridLayout(1, fifthRow.length));
 
 		// add subpanels to main letter panel
+		letterKeyboard.add(letterKeyboardPanel0);
 		letterKeyboard.add(letterKeyboardPanel1);
 		letterKeyboard.add(letterKeyboardPanel2);
 		letterKeyboard.add(letterKeyboardPanel3);
 		letterKeyboard.add(letterKeyboardPanel4);
 		letterKeyboard.add(letterKeyboardPanel5);
 
+		for (int i = 0; i < zeroRow.length; i++)
+		{
+			JButton b = new JButton(zeroRow[i]);
+			letterKeyboardPanel0.add(b);
+			allKeyboardButtonMap.put(b, zeroRow[i]);
+			b.addActionListener(this);
+		}
+		
 		for (int i = 0; i < firstRow.length; i++)
 		{
 			JButton button = new JButton(firstRow[i]);
