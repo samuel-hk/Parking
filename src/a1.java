@@ -228,7 +228,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		subscriptionPane.add(yorkLogoLabelEmailPage);
 		subscriptionPane.add(displayName);
-		
+
+		// setup letter keyboard for subscription pane
+		setupLetterKeyboard();
+		subscriptionPane.add(letterKeyboard);
 		
 		
 		vehiclePane = new JPanel();
@@ -284,8 +287,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				studentNumber = studentNumberInput.getText();
 				remove(p1);
 				setContentPane(p2);
-				setupLetterKeyboard();
-				subscriptionPane.add(letterKeyboard);
 				this.pack();
 				
 				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName");
