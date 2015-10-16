@@ -389,8 +389,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		
 		
-		
-
 	} // end constructor
 	
 	private void setupSubscriptionPanel()
@@ -509,7 +507,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		insurancePane.add(displayNameInInsurance);
 		insurancePane.add(companyInfoPane);
 		insurancePane.add(policyNumberPane);
-		//add keyboard here------------------------------------------------------------------------------------ thx for the insturction emily
 		insurancePane.add(insuranceKeyboardPanel);
 		insurancePane.add(errorMessageOnInsurance);
 		insurancePane.add(buttonPaneOnInsurance);
@@ -636,7 +633,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		displayNameOnPermit = new JLabel();
 
 		// set up expiry date panel 
-		expiryDatePanel = new JPanel(new GridLayout(expiryDatePanelROW, 1));
+		if ( expiryDatePanel == null ) expiryDatePanel = new JPanel(new GridLayout(expiryDatePanelROW, 1));
 		expiryDatePanel.setPreferredSize(new Dimension(1200,700));
 
 		expiryDatePanel.setBackground(Color.WHITE);
@@ -706,8 +703,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		expiryDatePanel.add(buttonPanelOnPermit);
 
-		
-		
 	} // end method setupExpiryDatePanel
 
 	private void setKeyboardSymbolEnabled(boolean enable)
@@ -897,6 +892,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		else if(ae.getSource().equals(submit))
 		{
 			setupPopUp();
+			cleanUp();
+			this.setContentPane(p1);
+			revalidate();
 		}
 		// case : select the number of days for permit
 		else if ( ae.getSource() == permitDurationBox)
@@ -910,7 +908,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			// change exipry date based on slected date
 			String output = getExpiryDate(dateInt);
 			expiryDateLabel.setText(output);
-			expiryDateString = output; // here
+			expiryDateString = output; 
 			
 			// update price based on selction
 			output = getPriceStr(dateInt);
@@ -919,6 +917,38 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		} // end if, number days for permit
 
 	}
+	
+	private void cleanUp()
+	{
+		// clear login panel
+		studentNumberInput.setText("");
+		PINInput.setText("");
+		incorrectLogin.setVisible(false);
+		
+		// clear subscribe panel
+		emailInput.setText("");
+		incorrectEmailFormat.setVisible(false);
+		
+		// clear vehicle panel
+		vehicleMakeInput.setText("");
+		vehicleModelInput.setText("");
+		plateNumberInput .setText("");
+		errorMessageOnVehicle.setVisible(false);
+		
+		// clear insurance panel
+		policyNumberInput.setText("");
+		errorMessageOnInsurance.setVisible(false);
+		
+		// clear parking panel
+		expiryDatePanel.removeAll();
+		setupExpiryDatePanel();
+		
+		// bring tabbed panel back to first page and disable others
+		p2.setSelectedIndex(0);
+		p2.setEnabledAt(1, false);
+		p2.setEnabledAt(2, false);
+		p2.setEnabledAt(3, false);
+	} // end method cleanUp
 	
 	private String getPriceStr(int date)
 	{
