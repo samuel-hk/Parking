@@ -615,7 +615,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				+"Policy Number: "+policyNumberString+"\n\n"
 				+"Permit Duration: "+permitDurationString+"\n"
 				+"Expiry Date: "+expiryDateString+"\n"
-				+"Amount Paid: "+amountPaidString.substring(17)+"\n\n"
+				+"Amount Paid: "+amountPaidString+"\n\n"
 				+receiptString;
 		
 		JOptionPane.showMessageDialog(null, displayMessage);	
@@ -670,7 +670,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		expiryDatePanel.add(expiryDateLabel);
 		
 		// setup price Label
-		String priceStr = getPrice(1);  // since default is sme day parking
+		String priceStr = getPriceStr(1);  // since default is sme day parking
 		priceLabel = new JLabel(priceStr);
 		priceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		expiryDatePanel.add(priceLabel);
@@ -904,24 +904,29 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			expiryDateString = output;
 			
 			// update price based on selction
-			output = getPrice(dateInt);
+			output = getPriceStr(dateInt);
 			priceLabel.setText(output);
-			amountPaidString = output;
+			amountPaidString = getPriceStr(dateInt);
 		} // end if, number days for permit
 
 	}
 	
+	private String getPriceStr(int date)
+	{
+		String priceStr = getPrice(date);
+		String output = "Current price is $" + priceStr;
+		return output;
+	} // end method getPriceStr
+
 	private String getPrice(int date)
 	{
 		int dailyPrice = 35; // temp increase by a factor 10
 		int price = dailyPrice * date;
 		String priceStr = Integer.toString(price);
 		priceStr = priceStr.substring(0, priceStr.length() - 1) + "." + priceStr.substring(priceStr.length() - 1);
-		
-		String output = "Current price is $" + priceStr;
-		return output;
+		return priceStr;
 	} // end method getPrice
-
+	
 	private String getExpiryDate(int date)
 	{
 		Date today = new Date();
