@@ -605,8 +605,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				+"Amount Paid: "+amountPaidString.substring(17)+"\n\n"
 				+receiptString;
 		
-		
-		
 		JOptionPane.showMessageDialog(null, displayMessage);	
 		
 	}
