@@ -17,9 +17,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +51,7 @@ public class a1
 	public static void main(String args[])
 	{
 		ParkingPermitKioskFrame.readStudentDatabase();
+		ParkingPermitKioskFrame.readCompanyDatabase();
 
 		ParkingPermitKioskFrame frame = new ParkingPermitKioskFrame();
 		frame.setTitle("York University Parking");
@@ -68,6 +71,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private JTextField PINInput;
 	private JButton loginButton;
 	public static HashMap<String,HashMap> studentMap = new HashMap<String,HashMap>();
+	public static List<String> companyDatabase = new ArrayList<String>();
 	JPanel p1;
 	JTabbedPane p2;
 	JLabel parkingTitle;
@@ -150,6 +154,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	
 	JButton nextOnInsurance;
 	JButton previousOnInsurance;
+	JLabel displayNameInInsurance;
+	
+	JComboBox companies;
+	String selectedCompany;
 	
 	//---------------------------------------------------------------
 	
@@ -405,10 +413,67 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		
 		//---------------------Insurance Information---------------------
+		insuranceTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
+		displayNameInInsurance = new JLabel();
+		
+		companyInfoPane = new JPanel();
+		companyInfoPane.setBackground(Color.white);
+		companyInfoPane.setLayout(new GridLayout(2,1));
+		
+		insuranceCompanyLabel = new JLabel("Please choose your insurance company: ");
+		companies = new JComboBox();
+		for(int i=0;i<companyDatabase.size();i++)
+		{
+			companies.addItem(companyDatabase.get(i));
+		}
+		companies.setSelectedIndex(0);
+		companies.addActionListener(this);
+		companyInfoPane.add(insuranceCompanyLabel);
+		companyInfoPane.add(companies);
+		
+		
+		policyNumberPane = new JPanel();
+		policyNumberPane.setBackground(Color.white);
+		policyNumberPane.setLayout(new GridLayout(2,1));
+		policyNumberLabel = new JLabel("Policy Number: ");
+		policyNumberInput = new JTextField();
+		policyNumberPane.add(policyNumberLabel);
+		policyNumberPane.add(policyNumberInput);
+		
+		buttonPaneOnInsurance = new JPanel();
+		buttonPaneOnInsurance.setBackground(Color.white);
+		buttonPaneOnInsurance.setLayout(new GridLayout(1,2));
+		
+	
+		
+		//previous and next buttons
+		previousOnInsurance = new JButton(previous);
+		previousOnInsurance.setBorder(BorderFactory.createEmptyBorder());
+		previousOnInsurance.addActionListener(this);
+		nextOnInsurance = new JButton(next);
+		nextOnInsurance.addActionListener(this);
+		nextOnInsurance.setBorder(BorderFactory.createEmptyBorder());
+
+		
+		buttonPaneOnInsurance.add(previousOnInsurance);
+		buttonPaneOnInsurance.add(nextOnInsurance);
+
 		insurancePane = new JPanel();
 		insurancePane.setPreferredSize(new Dimension(1200,700));
 		insurancePane.setBackground(Color.white);
+		insurancePane.setLayout(new GridLayout(6,1));
+		
+		insurancePane.add(insuranceTitle);
+		insurancePane.add(displayNameInInsurance);
+		insurancePane.add(companyInfoPane);
+		insurancePane.add(policyNumberPane);
+		//add keyboard here
+		insurancePane.add(buttonPaneOnInsurance);
+		
+		
 		//---------------------------------------------------------------
+		
+		
 		
 		//--------------------------
 
@@ -526,6 +591,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName")+" "+studentMap.get(studentNumber).get("FamilyName");
 				displayName.setText(displayNameString);
 				displayNameInVehicle.setText(displayNameString);
+				displayNameInInsurance.setText(displayNameString);
 			}
 			else
 			{
@@ -563,6 +629,20 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		else if(ae.getSource().equals(previousOnVehicle))
 		{
 			p2.setSelectedIndex(0);
+			this.pack();
+		}
+		else if(ae.getSource().equals(companies))
+		{
+			selectedCompany = (String)companies.getSelectedItem();
+		}
+		else if(ae.getSource().equals(nextOnInsurance))
+		{
+			p2.setSelectedIndex(3);
+			this.pack();
+		}
+		else if(ae.getSource().equals(previousOnInsurance))
+		{
+			p2.setSelectedIndex(1);
 			this.pack();
 		}
 		// case : select the number of days for permit
@@ -674,6 +754,38 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			System.out.println("studentNumberAndPINMatches: false");
 			return false;
 		}
+	}
+	
+	public static List<String> readCompanyDatabase()
+	{
+		
+		File file = new File("companies.txt");
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		
+		try
+		{
+			fis = new FileInputStream(file);
+			bis = new BufferedInputStream(fis);
+			dis = new DataInputStream(bis);
+			
+			String str;
+			while(dis.available() != 0)
+			{
+				str = dis.readLine();
+				
+				companyDatabase.add(str);
+				
+			}
+		}catch(IOException e)
+		{
+			System.out.println("File Error");
+		}
+		
+		
+		return companyDatabase;
+		
 	}
 
 	private void setupNumKeyboard()
