@@ -72,6 +72,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 	JLabel yorkLogoLabelEmailPage;
 	JPanel vehiclePane;
 	JLabel displayName;
+	String displayNameString;
+	String studentNumber;
 	
 	private JPanel numKeyboardPanel;
 	
@@ -203,7 +205,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		
 		
 
-		String displayNameString = new String((String) studentMap.get(studentNumberInput.getText()).get("GivenName"));
+		displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName");
+		
 		//System.out.println(ParkingPermitKioskFrame.studentMap.get("123456789").get("GivenName"));
 
 		
@@ -239,6 +242,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 			readStudentDatabase();
 			if(studentNumberInDatabase(studentNumberInput.getText())&&studentNumberAndPINMatches(studentNumberInput.getText(),PINInput.getText()))
 			{
+				studentNumber = studentNumberInput.getText();
 				remove(p1);
 				setContentPane(p2);
 				this.pack();
