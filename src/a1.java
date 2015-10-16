@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -60,15 +61,30 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 	ImageIcon yorkLogo = new ImageIcon("images/title.jpg");
 	ImageIcon login = new ImageIcon("images/LOGIN.png");
 	
+	private JPanel numKeyboardPanel;
+	
 	public ParkingPermitKioskFrame()
 	{
+		// input field properties
+		int inputWidth = 200;
+		int inputHeight = 50;
 		
+		// set up student input text field
 		studentNumberInput = new JTextField(9);
 		studentNumberInput.addActionListener(this);
+		studentNumberInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
+		
+		// set up PIN input field
 		PINInput = new JTextField(4);
 		PINInput.addActionListener(this);
+		PINInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
+		
+		// set up signal labels
+		int fontSize =30;
 		studentNumberLabel = new JLabel("Student Number: ");
 		PINLabel = new JLabel("PIN: ");
+		studentNumberLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
+		PINLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
 		incorrectLogin = new JLabel("Student Number or PIN Incorrect");
 		incorrectLogin.setVisible(false);
 		
@@ -76,7 +92,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		loginButton = new JButton(login);
 		
 		
-		  loginButton.setBorder(BorderFactory.createEmptyBorder());
+		loginButton.setBorder(BorderFactory.createEmptyBorder());
 		
 		  //add action listener to the loginButton button
 		loginButton.addActionListener(this);
@@ -105,10 +121,28 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		JPanel loginPane = new JPanel();
 		loginPane.setBackground(Color.white);
 		loginPane.setLayout(new GridLayout(2,1));
-		loginPane.add(loginsub1);
-		loginPane.add(loginsub2);
+//		loginPane.add(loginsub1);
+//		loginPane.add(loginsub2);
 		
+		JPanel inputPanel = new JPanel(new GridLayout(2, 4));
+
+		inputPanel.add(new JLabel(""));
 		
+		inputPanel.add(studentNumberLabel);
+		inputPanel.add(studentNumberInput);
+
+		inputPanel.add(new JLabel(""));
+		inputPanel.add(new JLabel(""));
+		
+		inputPanel.add(PINLabel);
+		inputPanel.add(PINInput);
+		
+		inputPanel.add(new JLabel(""));
+		
+		inputPanel.setBackground(Color.white);
+		loginPane.add(inputPanel);
+
+		//
 		
 		//main panel for login page
 		p1 = new JPanel();
@@ -148,7 +182,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 			}
 			else
 			{
+				int fontSize = 30;
 				incorrectLogin.setVisible(true);
+				incorrectLogin.setForeground(Color.RED);
+				incorrectLogin.setBackground(Color.WHITE);
+				incorrectLogin.setFont(new Font("Serif", Font.BOLD, fontSize));
+				incorrectLogin.setHorizontalAlignment(JLabel.CENTER);
 			}
 			
 		}
