@@ -632,11 +632,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		nextOnVehicle.addActionListener(this);
 		nextOnVehicle.setBorder(BorderFactory.createEmptyBorder());
 
-		
+		JPanel errorPanelOnVehicle = new JPanel();
+		errorPanelOnVehicle.add(errorMessageOnVehicle);
 		buttonPaneOnVehicle.add(previousOnVehicle);
 		buttonPaneOnVehicle.add(nextOnVehicle);
 		errorMessageOnVehicle.setVisible(false);
-		vehiclePane.add(errorMessageOnVehicle);
+		vehiclePane.add(errorPanelOnVehicle);
 		
 		vehiclePane.add(buttonPaneOnVehicle);
 	} // end method setupVehiclePanel
