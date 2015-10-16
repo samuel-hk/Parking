@@ -34,14 +34,18 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -65,7 +69,7 @@ public class a1
 
 }
 
-class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusListener
+class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusListener, ChangeListener
 {
 	private JLabel studentNumberLabel;
 	JTextField studentNumberInput;
@@ -82,10 +86,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 
 	//---------------------Image Source---------------------
+	ImageIcon icon = new ImageIcon("images/car-tab-icon.png");
 	ImageIcon yorkLogo = new ImageIcon("images/title.jpg");
 	ImageIcon login = new ImageIcon("images/LOGIN.png");
 	ImageIcon next = new ImageIcon("images/NEXT.jpg");
 	ImageIcon previous = new ImageIcon("images/PREVIOUS.jpg");
+	ImageIcon submitImage = new ImageIcon("images/SUBMIT.jpg");
+	ImageIcon printImage = new ImageIcon("images/PRINT.jpg");
 	//------------------------------------------------------
 
 
@@ -117,15 +124,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	
 	JPanel vehiclePane;
 	JPanel vehicleKeyboardPane;
-
-	//-------------------------------------------------------------
-
-	// expiry date panel and items
-	private JPanel expiryDatePanel;
-	private JComboBox<Integer> permitDurationBox;
-	private JLabel todayLabel;
-	private JLabel expiryDateLabel;
-	private JLabel priceLabel;
 
 	JLabel vehicleMakeLabel;
 	JTextField vehicleMakeInput;
@@ -168,6 +166,32 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	String selectedCompany;
 	
 	//---------------------------------------------------------------
+	
+	
+	
+	// ---------------------------Permit---------------------------
+		private JPanel expiryDatePanel;
+		private JComboBox<Integer> permitDurationBox;
+		private JLabel todayLabel;
+		private JLabel expiryDateLabel;
+		private JLabel priceLabel;
+		private JLabel permitTitle;
+		JButton previousOnPermit;
+		JButton submit;
+		JPanel buttonPanelOnPermit;
+		JLabel displayNameOnPermit;
+
+		
+	//--------------------------------------------------------------
+		
+	//---------------------------popupMenu---------------------------
+		JPopupMenu popup;
+		String name;
+		
+		
+	//---------------------------------------------------------------
+
+	
 	
 	
 	
@@ -304,20 +328,83 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		//------------------------------------------------------
 
 		//---------------------Subscription---------------------
+		setupSubscriptionPanel();
+
+		//------------------------------------------------------
+
+
+		//---------------------Vehicle Information---------------------
+		setupVehiclePanel();
+		
+
+		//-------------------------------------------------------------
+		
+		
+		//---------------------Insurance Information---------------------
+		setupInsurancePanel();		
+		
+		//---------------------------------------------------------------
+		
+		
+		
+		//----------------------------Permit------------------------------
+		//displayNameOnPermit = new JLabel();
+
+		setupExpiryDatePanel();
+		
+		//---------------------------------------------------------------
+		
+		
+
+		p2 = new JTabbedPane();
+		p2.addChangeListener(this);
+		//p2.add(PINLabel);
+		p2.setPreferredSize(new Dimension(1200,700));
+		p2.addTab("Subscribe",icon, subscriptionPane);
+//		p2.addTab("Vehicle Information",vehiclePane);
+		p2.addTab("My Vehicle",icon,vehiclePane);
+		p2.addTab("Insurance",  icon,insurancePane);
+		p2.addTab("Expiry Date",icon, expiryDatePanel);
+		
+		p2.setEnabledAt(1, false);
+		p2.setEnabledAt(2, false);
+		p2.setEnabledAt(3, false);
+		
+		
+		
+		
+
+	} // end constructor
+	
+	private void setupPopUp()
+	{
+		name = "Full Name: "+displayNameString;
+		popup = new JPopupMenu();
+		
+		
+		JMenuItem NameItem = new JMenuItem(name);
+		popup.add(NameItem);
+		
+popup.show();		
+	}
+	
+	private void setupSubscriptionPanel()
+	{
 		yorkLogoLabelEmailPage = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		subscriptionPane = new JPanel();
 		subscriptionPane.setBackground(Color.white);
 		subscriptionPane.setLayout(new GridLayout(5,1));
 		subscriptionPane.setPreferredSize(new Dimension(1200,700));
 
-		displayName = new JLabel(displayNameString);
 
 		subscriptionPane.add(yorkLogoLabelEmailPage);
-		subscriptionPane.add(displayName);
 
+		final int INPUTPANELROW = 4;
 		emailInputPanel = new JPanel();
+		displayName = new JLabel(displayNameString);
+		emailInputPanel.add(displayName);
 		emailInputPanel.setBackground(Color.white);
-		emailInputPanel.setLayout(new GridLayout(3,1));
+		emailInputPanel.setLayout(new GridLayout(INPUTPANELROW,1));
 		emailLabel = new JLabel("Would you like to receive parking news at york?\nPlease enter your Email(Optional): ");
 		emailInput = new JTextField(25);
 		emailInput.addActionListener(this);
@@ -343,93 +430,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		// setup letter keyboard for subscription pane
 		setupLetterKeyboard();
 		subscriptionKeyboardPanel = new JPanel();
+		subscriptionKeyboardPanel.setBackground(Color.WHITE);
 		subscriptionKeyboardPanel.add(letterKeyboard);
 		subscriptionPane.add(subscriptionKeyboardPanel);
 		subscriptionPane.add(buttonPanelOnSubscription);
-
-
-
-		//------------------------------------------------------
-
-
-		//---------------------Vehicle Information---------------------
-		final int VECHILEPANEROW = 7;
-		vehiclePane = new JPanel();
-		vehiclePane.setPreferredSize(new Dimension(1200,700));
-		vehiclePane.setBackground(Color.white);
-		vehiclePane.setLayout(new GridLayout(VECHILEPANEROW,1));
-		
-		vehicleTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
-		
-		vehiclePane.add(vehicleTitle);
-		
-		displayNameInVehicle = new JLabel(displayNameString);
-		vehiclePane.add(displayNameInVehicle);
-		
-		vehicleMakeLabel = new JLabel("Vehicle Make");
-		vehicleMakeInput = new JTextField(15);
-		vehicleMakeInput.addActionListener(this);
-		vehicleMakeInput.addFocusListener(this);
-		vehicleModelLabel = new JLabel("Vehicle Model");
-		vehicleModelInput = new JTextField(15);
-		vehicleModelInput.addActionListener(this);
-		vehicleModelInput.addFocusListener(this);
-		plateNumberLabel = new JLabel("Plate Number: ");
-		plateNumberInput = new JTextField(15);
-		plateNumberInput.addActionListener(this);
-		plateNumberInput.addFocusListener(this);
-				
-		vehicleMakePane = new JPanel();
-		vehicleMakePane.setBackground(Color.white);
-		vehicleMakePane.setLayout(new FlowLayout());
-		vehicleMakePane.add(vehicleMakeLabel);
-		vehicleMakePane.add(vehicleMakeInput);
-		
-		vehiclePane.add(vehicleMakePane);
-		
-		vehicleModelPane = new JPanel();
-		vehicleModelPane.setBackground(Color.white);
-		vehicleModelPane.setLayout(new FlowLayout());
-		vehicleModelPane.add(vehicleModelLabel);
-		vehicleModelPane.add(vehicleModelInput);
-		
-		vehiclePane.add(vehicleModelPane);
-		
-		plateNumberPane = new JPanel();
-		plateNumberPane.setBackground(Color.white);
-		plateNumberPane.setLayout(new FlowLayout());
-		plateNumberPane.add(plateNumberLabel);
-		plateNumberPane.add(plateNumberInput);
-		
-		vehiclePane.add(plateNumberPane);
-		
-		// keyboard panel 
-		vehicleKeyboardPane = new JPanel();
-		vehiclePane.add(vehicleKeyboardPane);
-		
-		buttonPaneOnVehicle = new JPanel();
-		buttonPaneOnVehicle.setBackground(Color.white);
-		buttonPaneOnVehicle.setLayout(new GridLayout(1,2));
-		
-		//previous and next buttons
-		previousOnVehicle = new JButton(previous);
-		previousOnVehicle.setBorder(BorderFactory.createEmptyBorder());
-		previousOnVehicle.addActionListener(this);
-		nextOnVehicle = new JButton(next);
-		nextOnVehicle.addActionListener(this);
-		nextOnVehicle.setBorder(BorderFactory.createEmptyBorder());
-
-		
-		buttonPaneOnVehicle.add(previousOnVehicle);
-		buttonPaneOnVehicle.add(nextOnVehicle);
-		
-		vehiclePane.add(buttonPaneOnVehicle);
-		
-
-		//-------------------------------------------------------------
-		
-		
-		//---------------------Insurance Information---------------------
+	} // end method setupSubscriptionPanel
+	
+	private void setupInsurancePanel()
+	{
 		insuranceTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		displayNameInInsurance = new JLabel();
 		
@@ -478,6 +486,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		buttonPaneOnInsurance.add(nextOnInsurance);
 		
 		insuranceKeyboardPanel = new JPanel();
+		insuranceKeyboardPanel.setBackground(Color.WHITE);
 
 		final int INSURANCEPANELROW = 7;
 		insurancePane = new JPanel();
@@ -492,39 +501,104 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		//add keyboard here------------------------------------------------------------------------------------ thx for the insturction emily
 		insurancePane.add(insuranceKeyboardPanel);
 		insurancePane.add(buttonPaneOnInsurance);
-		
-		
-		//---------------------------------------------------------------
-		
-		
-		
-		//--------------------------
 
-		setupExpiryDatePanel();
+	} // end method setupInsurancePanel
+	
+	private void setupVehiclePanel()
+	{
+		
+		final int VECHILEPANEROW = 7;
+		vehiclePane = new JPanel();
+		vehiclePane.setPreferredSize(new Dimension(1200,700));
+		vehiclePane.setBackground(Color.white);
+		vehiclePane.setLayout(new GridLayout(VECHILEPANEROW,1));
+		
+		vehicleTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
+		
+		vehiclePane.add(vehicleTitle);
+		
+		displayNameInVehicle = new JLabel(displayNameString);
+		vehiclePane.add(displayNameInVehicle);
 
-		p2 = new JTabbedPane();
-		//p2.add(PINLabel);
-		p2.setPreferredSize(new Dimension(1200,700));
-		p2.addTab("Subscribe", subscriptionPane);
-//		p2.addTab("Vehicle Information",vehiclePane);
-		p2.addTab("My Vehicle",vehiclePane);
-		p2.addTab("Insurance",  insurancePane);
-		p2.addTab("Expiry Date", expiryDatePanel);
+		// panel to hold input and related labels
+		final int inputPanelROW = 3;
+		JPanel inputPanel = new JPanel(new GridLayout(inputPanelROW, 1));
 		
+		vehicleMakeLabel = new JLabel("Vehicle Make");
+		vehicleMakeInput = new JTextField(15);
+		vehicleMakeInput.addActionListener(this);
+		vehicleMakeInput.addFocusListener(this);
+		vehicleModelLabel = new JLabel("Vehicle Model");
+		vehicleModelInput = new JTextField(15);
+		vehicleModelInput.addActionListener(this);
+		vehicleModelInput.addFocusListener(this);
+		plateNumberLabel = new JLabel("Plate Number: ");
+		plateNumberInput = new JTextField(15);
+		plateNumberInput.addActionListener(this);
+		plateNumberInput.addFocusListener(this);
+				
+		vehicleMakePane = new JPanel();
+		vehicleMakePane.setBackground(Color.white);
+		vehicleMakePane.setLayout(new FlowLayout());
+		vehicleMakePane.add(vehicleMakeLabel);
+		vehicleMakePane.add(vehicleMakeInput);
 		
+		inputPanel.add(vehicleMakePane);
 		
+		vehicleModelPane = new JPanel();
+		vehicleModelPane.setBackground(Color.white);
+		vehicleModelPane.setLayout(new FlowLayout());
+		vehicleModelPane.add(vehicleModelLabel);
+		vehicleModelPane.add(vehicleModelInput);
 		
+		inputPanel.add(vehicleModelPane);
+		
+		plateNumberPane = new JPanel();
+		plateNumberPane.setBackground(Color.white);
+		plateNumberPane.setLayout(new FlowLayout());
+		plateNumberPane.add(plateNumberLabel);
+		plateNumberPane.add(plateNumberInput);
+		
+		inputPanel.add(plateNumberPane);
+		vehiclePane.add(inputPanel);
+		
+		// keyboard panel 
+		vehicleKeyboardPane = new JPanel();
+		vehicleKeyboardPane.setBackground(Color.WHITE);
+		vehiclePane.add(vehicleKeyboardPane);
+		
+		buttonPaneOnVehicle = new JPanel();
+		buttonPaneOnVehicle.setBackground(Color.white);
+		buttonPaneOnVehicle.setLayout(new GridLayout(1,2));
+		
+		//previous and next buttons
+		previousOnVehicle = new JButton(previous);
+		previousOnVehicle.setBorder(BorderFactory.createEmptyBorder());
+		previousOnVehicle.addActionListener(this);
+		nextOnVehicle = new JButton(next);
+		nextOnVehicle.addActionListener(this);
+		nextOnVehicle.setBorder(BorderFactory.createEmptyBorder());
 
-	} // end constructor
+		
+		buttonPaneOnVehicle.add(previousOnVehicle);
+		buttonPaneOnVehicle.add(nextOnVehicle);
+		
+		vehiclePane.add(buttonPaneOnVehicle);
+	} // end method setupVehiclePanel
 
 	private void setupExpiryDatePanel()
 	{
 		// expiry date properties
-		final int expiryDatePanelROW = 6;
+		final int expiryDatePanelROW = 9;
 		final int LONGESTPERMITDATE = 30;
+		
+		permitTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
+		displayNameOnPermit = new JLabel();
 
 		// set up expiry date panel 
 		expiryDatePanel = new JPanel(new GridLayout(expiryDatePanelROW, 1));
+		expiryDatePanel.setPreferredSize(new Dimension(1200,700));
+
 		expiryDatePanel.setBackground(Color.WHITE);
 
 		// set up today label
@@ -533,6 +607,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		String todayStr = "Today: " + format.format(today);
 		todayLabel = new JLabel(todayStr);
 		todayLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		expiryDatePanel.add(permitTitle);
+		expiryDatePanel.add(displayNameOnPermit);
 		expiryDatePanel.add(todayLabel);
 		
 		// set up date selection label
@@ -566,6 +642,26 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		String noteStr = "Please note that the billing is automatically applied to your account.";
 		JLabel noteLabel = new JLabel(noteStr);
 		expiryDatePanel.add(noteLabel);
+		
+		// setup button
+		buttonPanelOnPermit = new JPanel();
+		buttonPanelOnPermit.setBackground(Color.white);
+		buttonPanelOnPermit.setLayout(new GridLayout(1,2));
+		
+		previousOnPermit = new JButton(previous);
+		previousOnPermit.addActionListener(this);
+		previousOnPermit.setBorder(BorderFactory.createEmptyBorder());
+		submit = new JButton(submitImage);
+		submit.addActionListener(this);
+		submit.setBorder(BorderFactory.createEmptyBorder());
+		
+		buttonPanelOnPermit.add(previousOnPermit);
+		buttonPanelOnPermit.add(submit);
+		
+		expiryDatePanel.add(buttonPanelOnPermit);
+
+		
+		
 	} // end method setupExpiryDatePanel
 
 	private void setKeyboardSymbolEnabled(boolean enable)
@@ -642,7 +738,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				displayName.setText(displayNameString);
 				displayNameInVehicle.setText(displayNameString);
 				displayNameInInsurance.setText(displayNameString);
-			}
+				displayNameOnPermit.setText(displayNameString);
+				
+				
+				}
 			else
 			{
 				int fontSize = 30;
@@ -658,11 +757,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		}
 		else if(ae.getSource().equals(nextOnSubscription))
 		{
-			if(emailValid(emailInput.getText()))
+			if( emailValid(emailInput.getText()) )
 			{
 				subscriptionKeyboardPanel.remove(letterKeyboard);
 				vehicleKeyboardPane.add(letterKeyboard);
 				setKeyboardSymbolEnabled(false);
+				p2.setEnabledAt(1, true);
 				revalidate();
 				//				remove(subscriptionPane);
 				//				setContentPane(vehiclePane);
@@ -677,6 +777,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		}
 		else if(ae.getSource().equals(nextOnVehicle))
 		{
+			p2.setEnabledAt(2,true);
+
 			p2.setSelectedIndex(2);
 			p1.remove(numKeyboardPanel);
 			insuranceKeyboardPanel.add(numKeyboardPanel);
@@ -698,6 +800,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		}
 		else if(ae.getSource().equals(nextOnInsurance))
 		{
+			p2.setEnabledAt(3, true);
 			p2.setSelectedIndex(3);
 			this.pack();
 		}
@@ -705,6 +808,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		{
 			p2.setSelectedIndex(1);
 			this.pack();
+		}
+		else if(ae.getSource().equals(previousOnPermit))
+		{
+			p2.setSelectedIndex(2);
+		}
+		else if(ae.getSource().equals(submit))
+		{
+			setupPopUp();
 		}
 		// case : select the number of days for permit
 		else if ( ae.getSource() == permitDurationBox)
@@ -861,6 +972,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 		// define keyboard
 		numKeyboardPanel = new JPanel(new GridLayout(ROW, COL));
+		numKeyboardPanel.setBackground(Color.WHITE);
 
 		// create map to hold keyboad data
 		allKeyboardButtonMap = new HashMap<>();
@@ -900,14 +1012,21 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 		// main letter keyboard panel
 		letterKeyboard = new JPanel(new GridLayout(rowNum, 1));
+		letterKeyboard.setBackground(Color.WHITE);
 
 		// subpanel for letter keyboard for the last row
 		JPanel letterKeyboardPanel0 = new JPanel(new GridLayout(1, zeroRow.length));
+		letterKeyboardPanel0.setBackground(Color.WHITE);
 		JPanel letterKeyboardPanel1 = new JPanel(new GridLayout(1, firstRow.length));
+		letterKeyboardPanel1.setBackground(Color.WHITE);
 		JPanel letterKeyboardPanel2 = new JPanel(new GridLayout(1, secondRow.length));
+		letterKeyboardPanel2.setBackground(Color.WHITE);
 		JPanel letterKeyboardPanel3 = new JPanel(new GridLayout(1, thirdRow.length));
+		letterKeyboardPanel3.setBackground(Color.WHITE);
 		JPanel letterKeyboardPanel4 = new JPanel(new GridLayout(1, fourthRow.length));
+		letterKeyboardPanel4.setBackground(Color.WHITE);
 		JPanel letterKeyboardPanel5 = new JPanel(new GridLayout(1, fifthRow.length));
+		letterKeyboardPanel5.setBackground(Color.WHITE);
 
 		// add subpanels to main letter panel
 		letterKeyboard.add(letterKeyboardPanel0);
@@ -1003,8 +1122,37 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	} // end method focusGained
 
 	@Override
-	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
+	public void focusLost(FocusEvent e) 
+	{
 
 	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) 
+	{
+		// index of panels in tab panels
+		final int SUBPANELINDEX = 0;
+		final int VEHICLEINDEX = 1;
+		final int INSURANCEINDEX = 2;
+		final int EXPIRYINDEX = 3;
+		
+		int currentIndex = p2.getSelectedIndex();
+		switch (currentIndex)
+		{
+			case SUBPANELINDEX:
+				subscriptionKeyboardPanel.add(letterKeyboard);
+				pack();
+				break;
+			case VEHICLEINDEX:
+				vehicleKeyboardPane.add(letterKeyboard);
+				pack();
+				break;
+			case INSURANCEINDEX:
+				break;
+			case EXPIRYINDEX:
+				break;
+		} // end switch, do action base on tab change
+		
+	} // end method stateChanged
+	
 }
