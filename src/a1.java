@@ -182,8 +182,21 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	//--------------------------------------------------------------
 		
 	//---------------------------popupMenu---------------------------
-		JPopupMenu popup;
-		String name;
+		
+		String displayMessage;
+		String nameString;
+		String emailString;
+		String vehicleMakeString;
+		String vehicleModelString;
+		String plateNumberString;
+		String companyString;
+		String policyNumberString;
+		String expiryDateString;
+		String permitDurationString;
+		String amountPaidString;
+		String receiptString;
+		
+		//JLabel 
 		
 		
 	//---------------------------------------------------------------
@@ -543,14 +556,24 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	
 	private void setupPopUp()
 	{
-		name = "Full Name: "+displayNameString;
-		popup = new JPopupMenu();
 		
 		
-		JMenuItem NameItem = new JMenuItem(name);
-		popup.add(NameItem);
+		displayMessage = "Full Name: "+nameString+"\n\n"
+				+ "Email: "+emailString+"\n\n"
+				+"Vehicle Make: "+vehicleMakeString+"\n"
+				+"Vehicle Model : "+vehicleModelString+"\n"
+				+"Plate Number: "+plateNumberString+"\n\n"
+				+"Insurance Company: "+companyString+"\n"
+				+"Policy Number: "+policyNumberString+"\n\n"
+				+"Permit Duration: "+permitDurationString+"\n"
+				+"Expiry Date: "+expiryDateString+"\n"
+				+"Amount Paid: "+amountPaidString.substring(17)+"\n\n"
+				+receiptString;
 		
-popup.show();		
+		
+		
+		JOptionPane.showMessageDialog(null, displayMessage);	
+		
 	}
 
 	private void setupExpiryDatePanel()
@@ -693,6 +716,7 @@ popup.show();
 				this.pack();
 
 				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName")+" "+studentMap.get(studentNumber).get("FamilyName");
+				nameString = studentMap.get(studentNumber).get("GivenName")+" "+studentMap.get(studentNumber).get("FamilyName");
 				displayName.setText(displayNameString);
 				displayNameInVehicle.setText(displayNameString);
 				displayNameInInsurance.setText(displayNameString);
@@ -717,6 +741,16 @@ popup.show();
 		{
 			if(emailValid(emailInput.getText()))
 			{
+				if(emailInput.getText().isEmpty())
+				{
+					emailString="Not Subscribed";
+					receiptString=" ";
+				}
+				else
+				{
+					emailString=emailInput.getText();
+					receiptString="A copy of receipt will be sent to your Email\nThanks for parking at York University";
+				}
 				subscriptionKeyboardPanel.remove(letterKeyboard);
 				vehicleKeyboardPane.add(letterKeyboard);
 				p2.setEnabledAt(1, true);
@@ -734,6 +768,10 @@ popup.show();
 		}
 		else if(ae.getSource().equals(nextOnVehicle))
 		{
+			//need to check if user have entered all three info
+			vehicleMakeString= vehicleMakeInput.getText();
+			vehicleModelString = vehicleModelInput.getText();
+			plateNumberString = plateNumberInput.getText();
 			p2.setEnabledAt(2,true);
 
 			p2.setSelectedIndex(2);
@@ -750,9 +788,12 @@ popup.show();
 		else if(ae.getSource().equals(companies))
 		{
 			selectedCompany = (String)companies.getSelectedItem();
+			companyString = selectedCompany;
 		}
 		else if(ae.getSource().equals(nextOnInsurance))
 		{
+			//need to check if user have entered policy number
+			policyNumberString = policyNumberInput.getText();
 			p2.setEnabledAt(3, true);
 			p2.setSelectedIndex(3);
 			this.pack();
@@ -773,17 +814,21 @@ popup.show();
 		// case : select the number of days for permit
 		else if ( ae.getSource() == permitDurationBox)
 		{
+			
 			// prase Input
 			String dateStr = permitDurationBox.getSelectedItem().toString();
 			Integer dateInt = Integer.parseInt(dateStr);
+			permitDurationString = dateStr+" Days";
 
 			// change exipry date based on slected date
 			String output = getExpiryDate(dateInt);
 			expiryDateLabel.setText(output);
+			expiryDateString = output;
 			
 			// update price based on selction
 			output = getPrice(dateInt);
 			priceLabel.setText(output);
+			amountPaidString = output;
 		} // end if, number days for permit
 
 	}
