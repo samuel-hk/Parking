@@ -331,7 +331,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				setContentPane(p2);
 				this.pack();
 				
-				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName");
+				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName")+" "+studentMap.get(studentNumber).get("FamilyName");
 				displayName.setText(displayNameString);
 			}
 			else
