@@ -44,6 +44,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import com.sun.org.apache.xml.internal.security.keys.content.KeyValue;
+
 public class a1
 {
 	public static void main(String args[])
@@ -96,6 +98,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	//---------------------Subscription---------------------
 
 	JPanel subscriptionPane;
+	JPanel subscriptionKeyboardPanel;
 	JLabel emailLabel;
 	JTextField emailInput;
 	JButton nextOnSubscription;
@@ -108,6 +111,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	//---------------------Vehicle Information---------------------
 
 	JPanel vehiclePane;
+	JPanel vehicleKeyboardPane;
 
 	//-------------------------------------------------------------
 
@@ -312,7 +316,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 		// setup letter keyboard for subscription pane
 		setupLetterKeyboard();
-		subscriptionPane.add(letterKeyboard);
+		subscriptionKeyboardPanel = new JPanel();
+		subscriptionKeyboardPanel.add(letterKeyboard);
+		subscriptionPane.add(subscriptionKeyboardPanel);
 		subscriptionPane.add(buttonPanelOnSubscription);
 
 
@@ -321,11 +327,11 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 
 		//---------------------Vehicle Information---------------------
-
+		final int VECHILEPANEROW = 6;
 		vehiclePane = new JPanel();
 		vehiclePane.setPreferredSize(new Dimension(1200,700));
 		vehiclePane.setBackground(Color.white);
-		vehiclePane.setLayout(new GridLayout(7,1));
+		vehiclePane.setLayout(new GridLayout(VECHILEPANEROW,1));
 		
 		vehicleTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		
@@ -335,12 +341,15 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		vehicleMakeLabel = new JLabel("Vehicle Make");
 		vehicleMakeInput = new JTextField(15);
 		vehicleMakeInput.addActionListener(this);
+		vehicleMakeInput.addFocusListener(this);
 		vehicleModelLabel = new JLabel("Vehicle Model");
 		vehicleModelInput = new JTextField(15);
 		vehicleModelInput.addActionListener(this);
+		vehicleModelInput.addFocusListener(this);
 		plateNumberLabel = new JLabel("Plate Number: ");
 		plateNumberInput = new JTextField(15);
 		plateNumberInput.addActionListener(this);
+		plateNumberInput.addFocusListener(this);
 				
 		vehicleMakePane = new JPanel();
 		vehicleMakePane.setBackground(Color.white);
@@ -365,6 +374,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		plateNumberPane.add(plateNumberInput);
 		
 		vehiclePane.add(plateNumberPane);
+		
+		// keyboard panel 
+		vehicleKeyboardPane = new JPanel();
+		vehiclePane.add(vehicleKeyboardPane);
 		
 		buttonPaneOnVehicle = new JPanel();
 		buttonPaneOnVehicle.setBackground(Color.white);
@@ -461,6 +474,24 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		expiryDatePanel.add(noteLabel);
 	} // end method setupExpiryDatePanel
 
+	private void setKeyboardSymbolEnabled(boolean enable)
+	{
+		if (enable)
+		{
+			for (Map.Entry<JButton, String> entry : allKeyboardButtonMap.entrySet())
+			{
+				JButton b = entry.getKey();
+				String text = b.getText();
+//				if (text.mat)
+			}
+		}
+		else
+		{
+			
+		}
+		
+	} // end method setKeyboardSymbolEnabled
+	
 	@Override
 	public void actionPerformed(ActionEvent ae) 
 	{
@@ -475,7 +506,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			int focusTextLength = focusTextValue.length();
 
 			// Backspace button
-			if (str.equals("Bk"))
+			if (str.equals("BackSpace"))
 			{
 				// only backspace when there is text
 				if (focusTextLength > 0)
@@ -524,6 +555,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		{
 			if(emailValid(emailInput.getText()))
 			{
+				subscriptionKeyboardPanel.remove(letterKeyboard);
+				vehicleKeyboardPane.add(letterKeyboard);
+				revalidate();
 				//				remove(subscriptionPane);
 				//				setContentPane(vehiclePane);
 				p2.setSelectedIndex(1);
@@ -543,6 +577,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		else if(ae.getSource().equals(previousOnVehicle))
 		{
 			p2.setSelectedIndex(0);
+			vehicleKeyboardPane.remove(letterKeyboard);
+			subscriptionKeyboardPanel.add(letterKeyboard);
+			revalidate();
 			this.pack();
 		}
 		// case : select the number of days for permit
@@ -664,7 +701,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		final int COL = 3;
 
 		// define keyboard data
-		String[] num = {"1", "2", "3", "4", "5", "6","7", "8", "9", "BOX", "0", "Bk"};
+		String[] num = {"1", "2", "3", "4", "5", "6","7", "8", "9", "BOX", "0", "BackSpace"};
 
 		// define keyboard
 		numKeyboardPanel = new JPanel(new GridLayout(ROW, COL));
