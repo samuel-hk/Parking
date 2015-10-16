@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -42,10 +43,13 @@ public class a1
 {
 	public static void main(String args[])
 	{
+		ParkingPermitKioskFrame.readStudentDatabase();
+		
 		ParkingPermitKioskFrame frame = new ParkingPermitKioskFrame();
 		frame.setTitle("York University Parking");
 		frame.pack();
 		frame.setVisible(true);
+		
 		
 	}
 	
@@ -58,14 +62,19 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private JLabel PINLabel;
 	private JTextField PINInput;
 	private JButton loginButton;
-	private static HashMap<String,HashMap> studentMap = new HashMap<String,HashMap>();
+	public static HashMap<String,HashMap> studentMap = new HashMap<String,HashMap>();
 	JPanel p1;
-	JPanel p2;
+	JPanel subscriptionPane;
+	JTabbedPane p2;
 	JLabel parkingTitle;
 	JLabel yorkLogoLabel;
 	JLabel incorrectLogin;
 	ImageIcon yorkLogo = new ImageIcon("images/title.jpg");
 	ImageIcon login = new ImageIcon("images/LOGIN.png");
+	//ImageIcon yorkLogoLabelEmailPage = new ImageIcon("images/title.jpg");
+	JLabel yorkLogoLabelEmailPage;
+	JPanel vehiclePane;
+	JLabel displayName;
 	
 	private JPanel numKeyboardPanel;
 	
@@ -195,9 +204,38 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		this.setContentPane(p1);
 		
-		p2 = new JPanel();
+		yorkLogoLabelEmailPage = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
+
+		
+		//Subscription Panel
+		subscriptionPane = new JPanel();
+		subscriptionPane.setBackground(Color.white);
+		subscriptionPane.setLayout(new GridLayout(4,1));
+		subscriptionPane.setPreferredSize(new Dimension(1200,700));
+		
+		
+
+		String displayNameString = new String((String) studentMap.get(studentNumberInput.getText()).get("GivenName"));
+		//System.out.println(ParkingPermitKioskFrame.studentMap.get("123456789").get("GivenName"));
+
+		
+		displayName = new JLabel(displayNameString);
+		
+		subscriptionPane.add(yorkLogoLabelEmailPage);
+		subscriptionPane.add(displayName);
+		
+		
+		
+		vehiclePane = new JPanel();
+		vehiclePane.setPreferredSize(new Dimension(1200,700));
+		
+		
+		p2 = new JTabbedPane();
 		//p2.add(PINLabel);
 		p2.setPreferredSize(new Dimension(1200,700));
+		p2.addTab("Subscribe", subscriptionPane);
+		p2.addTab("Vehicle Information",vehiclePane);
+		
 		
 		
 		
