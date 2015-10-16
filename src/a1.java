@@ -140,6 +140,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JPanel buttonPaneOnVehicle;
 	JLabel displayNameInVehicle;
 	
+	JLabel errorMessageOnVehicle;
+	
 	//-------------------------------------------------------------
 	
 	
@@ -164,6 +166,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	
 	JComboBox companies;
 	String selectedCompany;
+	
+	JLabel errorMessageOnInsurance;
 	
 	//---------------------------------------------------------------
 	
@@ -442,6 +446,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		insuranceTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		displayNameInInsurance = new JLabel();
 		
+		errorMessageOnInsurance = new JLabel("Please enter Policy Number");
+		errorMessageOnInsurance.setVisible(false);
+		
 		companyInfoPane = new JPanel();
 		companyInfoPane.setBackground(Color.white);
 		companyInfoPane.setLayout(new GridLayout(2,1));
@@ -458,7 +465,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		companyInfoPane.add(companies);
 		
 		
-		final int POLICYLIMIT = 9; // assuming the limit of a policy number is 9 digits
+		final int POLICYLIMIT = 10; // assuming the limit of a policy number is 9 digits
 		policyNumberPane = new JPanel();
 		policyNumberPane.setBackground(Color.white);
 		policyNumberPane.setLayout(new GridLayout(2,1));
@@ -501,6 +508,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		insurancePane.add(policyNumberPane);
 		//add keyboard here------------------------------------------------------------------------------------ thx for the insturction emily
 		insurancePane.add(insuranceKeyboardPanel);
+		insurancePane.add(errorMessageOnInsurance);
 		insurancePane.add(buttonPaneOnInsurance);
 
 	} // end method setupInsurancePanel
@@ -508,7 +516,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private void setupVehiclePanel()
 	{
 		
-		final int VECHILEPANEROW = 7;
+		
+		final int VECHILEPANEROW = 8;
 		vehiclePane = new JPanel();
 		vehiclePane.setPreferredSize(new Dimension(1200,700));
 		vehiclePane.setBackground(Color.white);
@@ -520,6 +529,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		displayNameInVehicle = new JLabel(displayNameString);
 		vehiclePane.add(displayNameInVehicle);
+		
+		errorMessageOnVehicle = new JLabel("Please complete all three fields");
 
 		// panel to hold input and related labels
 		final int inputPanelROW = 3;
@@ -583,6 +594,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		buttonPaneOnVehicle.add(previousOnVehicle);
 		buttonPaneOnVehicle.add(nextOnVehicle);
+		errorMessageOnVehicle.setVisible(false);
+		vehiclePane.add(errorMessageOnVehicle);
 		
 		vehiclePane.add(buttonPaneOnVehicle);
 	} // end method setupVehiclePanel
@@ -812,17 +825,27 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		}
 		else if(ae.getSource().equals(nextOnVehicle))
 		{
-			//need to check if user have entered all three info
-			vehicleMakeString= vehicleMakeInput.getText();
-			vehicleModelString = vehicleModelInput.getText();
-			plateNumberString = plateNumberInput.getText();
-			p2.setEnabledAt(2,true);
+			if(vehicleInfoValid(vehicleMakeInput.getText(),vehicleModelInput.getText(),plateNumberInput.getText()))
+			{
+				
 
-			p2.setSelectedIndex(2);
-			p1.remove(numKeyboardPanel);
-			insuranceKeyboardPanel.add(numKeyboardPanel);
-			revalidate();
-			this.pack();
+				vehicleMakeString= vehicleMakeInput.getText();
+				vehicleModelString = vehicleModelInput.getText();
+				plateNumberString = plateNumberInput.getText();
+				p2.setEnabledAt(2,true);
+
+				p2.setSelectedIndex(2);
+				p1.remove(numKeyboardPanel);
+				insuranceKeyboardPanel.add(numKeyboardPanel);
+				revalidate();
+				this.pack();
+			}
+			else
+			{
+				errorMessageOnVehicle.setVisible(true);
+			}
+			
+			
 		}
 		else if(ae.getSource().equals(previousOnVehicle))
 		{
@@ -840,11 +863,18 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		}
 		else if(ae.getSource().equals(nextOnInsurance))
 		{
-			//need to check if user have entered policy number
-			policyNumberString = policyNumberInput.getText();
-			p2.setEnabledAt(3, true);
-			p2.setSelectedIndex(3);
-			this.pack();
+			if(policyNumberValid(policyNumberInput.getText()))
+			{
+				policyNumberString = policyNumberInput.getText();
+				p2.setEnabledAt(3, true);
+				p2.setSelectedIndex(3);
+				this.pack();
+			}
+			else
+			{
+				errorMessageOnInsurance.setVisible(true);
+			}
+			
 		}
 		else if(ae.getSource().equals(previousOnInsurance))
 		{
@@ -960,6 +990,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		}
 	}
 
+	public static boolean policyNumberValid(String policyNum)
+	{
+		if(policyNum.isEmpty())
+			return false;
+		else
+			return true;
+	}
 	public static boolean studentNumberAndPINMatches(String studentNumberInput,String PINInput)
 	{
 		if(studentNumberInDatabase(studentNumberInput) && studentMap.get(studentNumberInput).get("PIN").equals(PINInput))
@@ -1156,6 +1193,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			System.out.println("Email Input Error");
 			return false;
 		}
+	}
+	
+	public static boolean vehicleInfoValid(String model,String make,String plateNum)
+	{
+		if(!model.isEmpty() && !make.isEmpty() && !plateNum.isEmpty())
+			return true;
+		else
+			return false;
 	}
 
 
