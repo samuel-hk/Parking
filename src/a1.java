@@ -107,10 +107,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 	//---------------------Vehicle Information---------------------
 
+	
 	JPanel vehiclePane;
-
-	//-------------------------------------------------------------
-
 	// expiry date panel and items
 	private JPanel expiryDatePanel;
 	private JComboBox<Integer> permitDurationBox;
@@ -131,12 +129,28 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JButton nextOnVehicle;
 	JButton previousOnVehicle;
 	JPanel buttonPaneOnVehicle;
+	JLabel displayNameInVehicle;
 	
 	//-------------------------------------------------------------
 	
 	
 	//---------------------Insurance Information---------------------
 	JPanel insurancePane;
+	JPanel companyInfoPane;
+	JPanel policyNumberPane;
+	JPanel buttonPaneOnInsurance;
+	
+	JLabel insuranceTitle;
+	JLabel displayNameOnInsurance;
+	
+	JLabel insuranceCompanyLabel;
+	
+	JLabel policyNumberLabel;
+	JTextField policyNumberInput;
+	
+	JButton nextOnInsurance;
+	JButton previousOnInsurance;
+	
 	//---------------------------------------------------------------
 	
 	
@@ -324,12 +338,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		vehiclePane = new JPanel();
 		vehiclePane.setPreferredSize(new Dimension(1200,700));
 		vehiclePane.setBackground(Color.white);
-		vehiclePane.setLayout(new GridLayout(7,1));
+		vehiclePane.setLayout(new GridLayout(6,1));
 		
 		vehicleTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		
 		vehiclePane.add(vehicleTitle);
-		//vehiclePane.add(displayName);
+		
+		displayNameInVehicle = new JLabel(displayNameString);
+		vehiclePane.add(displayNameInVehicle);
 		
 		vehicleMakeLabel = new JLabel("Vehicle Make");
 		vehicleMakeInput = new JTextField(15);
@@ -371,9 +387,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		//previous and next buttons
 		previousOnVehicle = new JButton(previous);
+		previousOnVehicle.setBorder(BorderFactory.createEmptyBorder());
 		previousOnVehicle.addActionListener(this);
 		nextOnVehicle = new JButton(next);
 		nextOnVehicle.addActionListener(this);
+		nextOnVehicle.setBorder(BorderFactory.createEmptyBorder());
+
 		
 		buttonPaneOnVehicle.add(previousOnVehicle);
 		buttonPaneOnVehicle.add(nextOnVehicle);
@@ -501,6 +520,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName")+" "+studentMap.get(studentNumber).get("FamilyName");
 				displayName.setText(displayNameString);
+				displayNameInVehicle.setText(displayNameString);
 			}
 			else
 			{
