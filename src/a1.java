@@ -16,6 +16,8 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -290,7 +292,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		//-------------------------------------------------------------
 
 		
-		
+//		Date today = new Date();
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+//		System.out.println("Today is " +  format.format(today));
+//		today.
 		
 		
 		p2 = new JTabbedPane();
