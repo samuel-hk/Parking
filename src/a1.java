@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +29,14 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -46,15 +49,15 @@ public class a1
 	public static void main(String args[])
 	{
 		ParkingPermitKioskFrame.readStudentDatabase();
-		
+
 		ParkingPermitKioskFrame frame = new ParkingPermitKioskFrame();
 		frame.setTitle("York University Parking");
 		frame.pack();
 		frame.setVisible(true);
-		
-		
+
+
 	}
-	
+
 }
 
 class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusListener
@@ -70,28 +73,28 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JLabel parkingTitle;
 	JLabel yorkLogoLabel;
 	JLabel incorrectLogin;
-	
-	
+
+
 	//---------------------Image Source---------------------
 	ImageIcon yorkLogo = new ImageIcon("images/title.jpg");
 	ImageIcon login = new ImageIcon("images/LOGIN.png");
 	ImageIcon next = new ImageIcon("images/NEXT.jpg");
 	ImageIcon previous = new ImageIcon("images/PREVIOUS.jpg");
 	//------------------------------------------------------
-	
-	
-	
-	
-	
+
+
+
+
+
 	//ImageIcon yorkLogoLabelEmailPage = new ImageIcon("images/title.jpg");
 	JLabel yorkLogoLabelEmailPage;
 	JLabel displayName;
 	String displayNameString;
 	String studentNumber;
-	
-	
+
+
 	//---------------------Subscription---------------------
-	
+
 	JPanel subscriptionPane;
 	JLabel emailLabel;
 	JTextField emailInput;
@@ -99,37 +102,44 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JPanel emailInputPanel;
 	JPanel buttonPanelOnSubscription;
 	JLabel incorrectEmailFormat;
-			
+
 	//------------------------------------------------------
-	
+
 	//---------------------Vehicle Information---------------------
-	
+
 	JPanel vehiclePane;
-	
+
 	//-------------------------------------------------------------
-	
+
+	// expiry date panel and items
+	private JPanel expiryDatePanel;
+	private JComboBox<Integer> permitDurationBox;
+	private JLabel todayLabel;
+	private JLabel expiryDateLabel;
+	private JLabel priceLabel;
+
 	// keyboard panels
 	private JPanel numKeyboardPanel;
 	private JPanel letterKeyboard;
-	
+
 	// to save the current focus input field
 	private JTextField focusText;
 	private Map<JTextField, Integer> focusTextLimit;
-	
+
 	private Map<JButton, String> allKeyboardButtonMap;
-	
+
 	public ParkingPermitKioskFrame()
 	{
 		// input field properties
 		int inputWidth = 200;
 		int inputHeight = 50;
-		
+
 		// set up student input text field
 		studentNumberInput = new JTextField(9);
 		studentNumberInput.addActionListener(this);
 		studentNumberInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
 		studentNumberInput.addFocusListener(this);
-		
+
 		// limit student input to 4 digits
 		final int STUDENTLIMIT= 9;
 		studentNumberInput.setDocument(new PlainDocument(){
@@ -140,13 +150,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 					super.insertString(offs, str, a);
 			}
 		});
-		
+
 		// set up PIN input field
 		PINInput = new JTextField(4);
 		PINInput.addActionListener(this);
 		PINInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
 		PINInput.addFocusListener(this);
-		
+
 		// limit PIN input to 4 digits
 		final int PINLIMIT = 4;
 		PINInput.setDocument(new PlainDocument(){
@@ -157,13 +167,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 					super.insertString(offs, str, a);
 			}
 		});
-		
+
 		// set up limit of each text field
 		focusTextLimit = new HashMap<>();
 		focusTextLimit.put(PINInput, PINLIMIT);
 		focusTextLimit.put(studentNumberInput, STUDENTLIMIT);
-		
-		
+
+
 		//---------------------Login---------------------		
 		// set up signal labels
 		int fontSize =30;
@@ -173,43 +183,43 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		PINLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
 		incorrectLogin = new JLabel("Student Number or PIN Incorrect");
 		incorrectLogin.setVisible(false);
-		
+
 		// read login button image and set it as button
 		loginButton = new JButton(login);
-		
-		
+
+
 		loginButton.setBorder(BorderFactory.createEmptyBorder());
-		
-		  //add action listener to the loginButton button
+
+		//add action listener to the loginButton button
 		loginButton.addActionListener(this);
-		
+
 		JPanel logoPane = new JPanel();
 		logoPane.setBackground(Color.white);
 		logoPane.setLayout(new GridLayout(1,2));
 		yorkLogoLabel = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		yorkLogoLabel.setSize(100, 100);
 		logoPane.add(yorkLogoLabel);
-		
-		
+
+
 		JPanel loginsub1 = new JPanel();
 		loginsub1.setBackground(Color.white);
 		loginsub1.setLayout(new FlowLayout());
 		loginsub1.add(studentNumberLabel);
 		loginsub1.add(studentNumberInput);
-		
+
 		JPanel loginsub2 = new JPanel();
 		loginsub2.setBackground(Color.white);
 		loginsub2.setLayout(new FlowLayout());
 		loginsub2.add(PINLabel);
 		loginsub2.add(PINInput);
-		
+
 		//put input field for student number and pin as a sub panel
 		JPanel loginPane = new JPanel();
 		loginPane.setBackground(Color.white);
 		loginPane.setLayout(new GridLayout(2,1));
-//		loginPane.add(loginsub1);
-//		loginPane.add(loginsub2);
-		
+		//		loginPane.add(loginsub1);
+		//		loginPane.add(loginsub2);
+
 		JPanel inputPanel = new JPanel(new GridLayout(2, 4));
 
 		inputPanel.add(new JLabel("")); // placeholder to position other elements
@@ -222,36 +232,36 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		inputPanel.add(new JLabel("")); // placeholder to position other elements
 		inputPanel.setBackground(Color.white);
 		loginPane.add(inputPanel);
-		
+
 		p1 = new JPanel();
 		p1.setBackground(Color.white);
 		p1.setPreferredSize(new Dimension(1200,700));
 		p1.setMaximumSize(new Dimension(1200,700));
 		p1.setLayout(new GridLayout(5,1));
-		
+
 		setupNumKeyboard();
-		
+
 		p1.add(logoPane);
 		p1.add(loginPane);
 		p1.add(incorrectLogin);
 		p1.add(loginButton);
 		p1.add(numKeyboardPanel);
-		
+
 		this.setContentPane(p1);
 		//------------------------------------------------------
-		
+
 		//---------------------Subscription---------------------
 		yorkLogoLabelEmailPage = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		subscriptionPane = new JPanel();
 		subscriptionPane.setBackground(Color.white);
 		subscriptionPane.setLayout(new GridLayout(5,1));
 		subscriptionPane.setPreferredSize(new Dimension(1200,700));
-		
+
 		displayName = new JLabel(displayNameString);
-		
+
 		subscriptionPane.add(yorkLogoLabelEmailPage);
 		subscriptionPane.add(displayName);
-		
+
 		emailInputPanel = new JPanel();
 		emailInputPanel.setBackground(Color.white);
 		emailInputPanel.setLayout(new GridLayout(3,1));
@@ -263,7 +273,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		incorrectEmailFormat = new JLabel("Please enter the correct Email format");
 		incorrectEmailFormat.setVisible(false);
 		emailInputPanel.add(incorrectEmailFormat);
-		
+
 		buttonPanelOnSubscription = new JPanel();
 		buttonPanelOnSubscription.setBackground(Color.white);
 		next.getImage().getScaledInstance(280, 116, Image.SCALE_SMOOTH);
@@ -273,60 +283,106 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		buttonPanelOnSubscription.add(nextOnSubscription);
 
 
-		
+
 		subscriptionPane.add(emailInputPanel);
 
 		// setup letter keyboard for subscription pane
 		setupLetterKeyboard();
 		subscriptionPane.add(letterKeyboard);
 		subscriptionPane.add(buttonPanelOnSubscription);
-		
-		
-		
+
+
+
 		//------------------------------------------------------
-		
-		
+
+
 		//---------------------Vehicle Information---------------------
-		
+
 		vehiclePane = new JPanel();
 		vehiclePane.setPreferredSize(new Dimension(1200,700));
 		vehiclePane.setBackground(Color.white);
-		
-		
+
+
 		//-------------------------------------------------------------
 
-		
-//		Date today = new Date();
-//		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-//		System.out.println("Today is " +  format.format(today));
-//		today.
-		
-		
+		setupExpiryDatePanel();
+
 		p2 = new JTabbedPane();
 		//p2.add(PINLabel);
 		p2.setPreferredSize(new Dimension(1200,700));
 		p2.addTab("Subscribe", subscriptionPane);
 		p2.addTab("Vehicle Information",vehiclePane);
-		
-		
-		
-		
-		
+		p2.addTab("Expiry Date", expiryDatePanel);
+
+
+
+
+
 	} // end constructor
-	
+
+	private void setupExpiryDatePanel()
+	{
+		// expiry date properties
+		final int expiryDatePanelROW = 6;
+		final int LONGESTPERMITDATE = 30;
+
+		// set up expiry date panel 
+		expiryDatePanel = new JPanel(new GridLayout(expiryDatePanelROW, 1));
+
+		// set up today label
+		Date today = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+		String todayStr = "Today: " + format.format(today);
+		todayLabel = new JLabel(todayStr);
+		todayLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		expiryDatePanel.add(todayLabel);
+		
+		// set up date selection label
+		String dateSelctionLabelStr = "Please select the number of dates you would like to purchase permit for";
+		JLabel dateSelctionLabel = new JLabel(dateSelctionLabelStr);
+		dateSelctionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		expiryDatePanel.add(dateSelctionLabel);
+
+		// set up select date combo box
+		Integer[] dateAvalible = new Integer[LONGESTPERMITDATE];
+		for (int i = 0; i < LONGESTPERMITDATE; i++)
+			dateAvalible[i] = i + 1;
+		permitDurationBox = new JComboBox<>(dateAvalible);
+		permitDurationBox.addActionListener(this);
+		((JLabel) permitDurationBox.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		expiryDatePanel.add(permitDurationBox);
+
+		// set up exipry day label
+		String exipryDateStr = getExpiryDate(1); // since defeault is same day parking
+		expiryDateLabel = new JLabel(exipryDateStr);
+		expiryDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		expiryDatePanel.add(expiryDateLabel);
+		
+		// setup price Label
+		String priceStr = getPrice(1);  // since default is sme day parking
+		priceLabel = new JLabel(priceStr);
+		priceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		expiryDatePanel.add(priceLabel);
+		
+		// setup note label
+		String noteStr = "Please note that the billing is automatically applied to your account.";
+		JLabel noteLabel = new JLabel(noteStr);
+		expiryDatePanel.add(noteLabel);
+	} // end method setupExpiryDatePanel
+
 	@Override
 	public void actionPerformed(ActionEvent ae) 
 	{
 		// TODO Auto-generated method stub
-		
+
 		// number keyboard press
 		String str = allKeyboardButtonMap.get(ae.getSource());
 		if ( str != null)
 		{
-//			JOptionPane.showMessageDialog(null, allKeyboardButtonMap.get(ae.getSource()), "TITLE", JOptionPane.PLAIN_MESSAGE);
+			//			JOptionPane.showMessageDialog(null, allKeyboardButtonMap.get(ae.getSource()), "TITLE", JOptionPane.PLAIN_MESSAGE);
 			String focusTextValue = focusText.getText();
 			int focusTextLength = focusTextValue.length();
-			
+
 			// Backspace button
 			if (str.equals("Bk"))
 			{
@@ -336,9 +392,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 					String text = focusTextValue.substring(0, focusTextLength - 1);
 					focusText.setText(text);					
 				} // end if, backspace only when there is text
-				
+
 			} // end if, backspace button
-			
+
 			// add digit
 			else if (focusText != null && focusTextLength < focusTextLimit.get(focusText) )
 				focusText.setText(focusTextValue + str);
@@ -353,7 +409,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				remove(p1);
 				setContentPane(p2);
 				this.pack();
-				
+
 				displayNameString = "Welcome "+studentMap.get(studentNumber).get("GivenName")+" "+studentMap.get(studentNumber).get("FamilyName");
 				displayName.setText(displayNameString);
 			}
@@ -365,52 +421,91 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				incorrectLogin.setBackground(Color.WHITE);
 				incorrectLogin.setFont(new Font("Serif", Font.BOLD, fontSize));
 				incorrectLogin.setHorizontalAlignment(JLabel.CENTER);
-				
-//				JOptionPane.showMessageDialog(null, PINInput.getText(), "TITLE", JOptionPane.PLAIN_MESSAGE);
+
+				//				JOptionPane.showMessageDialog(null, PINInput.getText(), "TITLE", JOptionPane.PLAIN_MESSAGE);
 			}
-			
+
 		}
 		else if(ae.getSource().equals(nextOnSubscription))
 		{
 			if(emailValid(emailInput.getText()))
 			{
-//				remove(subscriptionPane);
-//				setContentPane(vehiclePane);
+				//				remove(subscriptionPane);
+				//				setContentPane(vehiclePane);
 				p2.setSelectedIndex(1);
 				this.pack();
-				
+
 			}
 			else
 			{
 				incorrectEmailFormat.setVisible(true);
-				
+
 			}
 		}
-		
-		
+
+		// case : select the number of days for permit
+		else if ( ae.getSource() == permitDurationBox)
+		{
+			// prase Input
+			String dateStr = permitDurationBox.getSelectedItem().toString();
+			Integer dateInt = Integer.parseInt(dateStr);
+
+			// change exipry date based on slected date
+			String output = getExpiryDate(dateInt);
+			expiryDateLabel.setText(output);
+			
+			// update price based on selction
+			output = getPrice(dateInt);
+			priceLabel.setText(output);
+		} // end if, number days for permit
+
+
 	}
 	
-	
+	private String getPrice(int date)
+	{
+		int dailyPrice = 35; // temp increase by a factor 10
+		int price = dailyPrice * date;
+		String priceStr = Integer.toString(price);
+		priceStr = priceStr.substring(0, priceStr.length() - 1) + "." + priceStr.substring(priceStr.length() - 1);
+		
+		String output = "Current price is $" + priceStr;
+		return output;
+	} // end method getPrice
+
+	private String getExpiryDate(int date)
+	{
+		Date today = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		cal.add(Calendar.DATE, date - 1);
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+		String output = "Permit Expiry Date: " +format.format(cal.getTime());
+		
+		return output;
+	} // end method getExipryDate
+
 	public static HashMap<String,HashMap> readStudentDatabase()
 	{
 		File file = new File("students.txt");
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
-		
+
 		try
 		{
 			fis = new FileInputStream(file);
 			bis = new BufferedInputStream(fis);
 			dis = new DataInputStream(bis);
-			
+
 			String str;
 			while(dis.available() != 0)
 			{
-				
+
 				HashMap<String,String> informationMap = new HashMap<String,String>();
 				str = dis.readLine();
-				
+
 				String[] line = str.split(",");
 				informationMap.put("PIN", line[1].trim());
 				informationMap.put("FamilyName",line[2].trim());
@@ -422,18 +517,18 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		{
 			System.out.println("File Error");
 		}
-		
+
 		System.out.println(studentMap.toString());
 
 		return studentMap;
-		
+
 	}
-	
+
 	public static boolean studentNumberInDatabase(String studentNumberInput)
 	{
 		Pattern pattern = Pattern.compile("^[0-9]{9}$");
 		Matcher matcher = pattern.matcher(studentNumberInput);
-		
+
 		if(studentMap.containsKey(studentNumberInput.trim())&&matcher.matches())
 		{
 			System.out.println("studenNumberInDatabase: true");
@@ -445,7 +540,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			return false;
 		}
 	}
-	
+
 	public static boolean studentNumberAndPINMatches(String studentNumberInput,String PINInput)
 	{
 		if(studentNumberInDatabase(studentNumberInput) && studentMap.get(studentNumberInput).get("PIN").equals(PINInput))
@@ -459,20 +554,20 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			return false;
 		}
 	}
-	
+
 	private void setupNumKeyboard()
 	{
-		
+
 		// define properties of keyboard 
 		final int ROW = 4;
 		final int COL = 3;
-		
+
 		// define keyboard data
 		String[] num = {"1", "2", "3", "4", "5", "6","7", "8", "9", "BOX", "0", "Bk"};
 
 		// define keyboard
 		numKeyboardPanel = new JPanel(new GridLayout(ROW, COL));
-		
+
 		// create map to hold keyboad data
 		allKeyboardButtonMap = new HashMap<>();
 
@@ -480,34 +575,34 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		{
 			JButton b = new JButton(num[i]);
 			numKeyboardPanel.add(b);
-			
+
 			// create empty box to position 90 in middle
 			if (num[i].equals("BOX"))
 			{
 				b.setEnabled(false);
 				b.setText("");
 			} // end if create empty box
-			
+
 			b.addActionListener(this);
-			
-			
+
+
 			allKeyboardButtonMap.put(b, num[i]);
 		} // end for add keys into keyboard
-		
+
 	} // end method setupNumKeyboard
-	
+
 	private void setupLetterKeyboard()
 	{
 		// define keyboard properties
 		int rowNum = 5;
-		
+
 		// keyboard data
 		String firstRow[] = {"~","1","2","3","4","5","6","7","8","9","0","-","+","BackSpace"};
 		String secondRow[] = {"Tab","Q","W","E","R","T","Y","U","I","O","P","[","]","\\"};
 		String thirdRow[] = {"A","S","D","F","G","H","J","K","L",":","\"","Enter"};
 		String fourthRow[] = {"Shift","Z","X","C","V","B","N","M",",",".","?"};
 		String fifthRow[]={" " ,"<" ,"\\/",">" };
-		
+
 		// main letter keyboard panel
 		letterKeyboard = new JPanel(new GridLayout(rowNum, 1));
 
@@ -517,14 +612,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		JPanel letterKeyboardPanel3 = new JPanel(new GridLayout(1, thirdRow.length));
 		JPanel letterKeyboardPanel4 = new JPanel(new GridLayout(1, fourthRow.length));
 		JPanel letterKeyboardPanel5 = new JPanel(new GridLayout(1, fifthRow.length));
-		
+
 		// add subpanels to main letter panel
 		letterKeyboard.add(letterKeyboardPanel1);
 		letterKeyboard.add(letterKeyboardPanel2);
 		letterKeyboard.add(letterKeyboardPanel3);
 		letterKeyboard.add(letterKeyboardPanel4);
 		letterKeyboard.add(letterKeyboardPanel5);
-		
+
 		for (int i = 0; i < firstRow.length; i++)
 		{
 			JButton button = new JButton(firstRow[i]);
@@ -532,7 +627,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			allKeyboardButtonMap.put(button, firstRow[i]);
 			button.addActionListener(this);
 		} // end for add first row
-		
+
 		// add second row keyboard
 		for (int i = 0; i < secondRow.length; i++)
 		{
@@ -541,7 +636,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			allKeyboardButtonMap.put(b, secondRow[i]);
 			b.addActionListener(this);
 		} // end for add second row
-		
+
 		// add third row keyboard
 		for (int i = 0; i < thirdRow.length; i++)
 		{
@@ -550,7 +645,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			allKeyboardButtonMap.put(b, thirdRow[i]);
 			b.addActionListener(this);
 		} // end for add third row
-		
+
 		// add forth row keyboard
 		for (int i = 0; i < fourthRow.length; i++)
 		{
@@ -559,7 +654,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			allKeyboardButtonMap.put(b, fourthRow[i]);
 			b.addActionListener(this);
 		} // end for add 4th row
-		
+
 		// add 5th row keyboard
 		for (int i = 0; i < fifthRow.length; i++)
 		{
@@ -568,10 +663,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			allKeyboardButtonMap.put(b, fifthRow[i]);
 			b.addActionListener(this);
 		} // end for add 4th row
-		
-		
+
+
 	} // end method setupLetterKeyboard
-	
+
 	public static boolean emailValid(String emailInput)
 	{
 		Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
@@ -605,6 +700,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	@Override
 	public void focusLost(FocusEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
