@@ -31,6 +31,9 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 public class a1
 {
@@ -74,10 +77,32 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 		studentNumberInput.addActionListener(this);
 		studentNumberInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
 		
+		// limit student input to 4 digits
+		final int STUDENTLIMIT= 9;
+		studentNumberInput.setDocument(new PlainDocument(){
+			@Override
+			public void insertString(int offs, String str, AttributeSet a)
+					throws BadLocationException {
+				if(getLength() + str.length()<= STUDENTLIMIT)
+					super.insertString(offs, str, a);
+			}
+		});
+		
 		// set up PIN input field
 		PINInput = new JTextField(4);
 		PINInput.addActionListener(this);
 		PINInput.setPreferredSize(new Dimension(inputWidth, inputHeight));
+		
+		// limit PIN input to 4 digits
+		final int PINLIMIT = 4;
+		PINInput.setDocument(new PlainDocument(){
+			@Override
+			public void insertString(int offs, String str, AttributeSet a)
+					throws BadLocationException {
+				if(getLength() + str.length()<= PINLIMIT)
+					super.insertString(offs, str, a);
+			}
+		});
 		
 		// set up signal labels
 		int fontSize =30;
@@ -188,6 +213,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener
 				incorrectLogin.setBackground(Color.WHITE);
 				incorrectLogin.setFont(new Font("Serif", Font.BOLD, fontSize));
 				incorrectLogin.setHorizontalAlignment(JLabel.CENTER);
+				
+//				JOptionPane.showMessageDialog(null, PINInput.getText(), "TITLE", JOptionPane.PLAIN_MESSAGE);
 			}
 			
 		}
