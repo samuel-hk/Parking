@@ -98,6 +98,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JButton nextOnSubscription;
 	JPanel emailInputPanel;
 	JPanel buttonPanelOnSubscription;
+	JLabel incorrectEmailFormat;
 			
 	//------------------------------------------------------
 	
@@ -253,12 +254,15 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		emailInputPanel = new JPanel();
 		emailInputPanel.setBackground(Color.white);
-		emailInputPanel.setLayout(new GridLayout(2,1));
+		emailInputPanel.setLayout(new GridLayout(3,1));
 		emailLabel = new JLabel("Would you like to receive parking news at york?\nPlease enter your Email(Optional): ");
 		emailInput = new JTextField(25);
 		emailInput.addActionListener(this);
 		emailInputPanel.add(emailLabel);
 		emailInputPanel.add(emailInput);
+		incorrectEmailFormat = new JLabel("Please enter the correct Email format");
+		incorrectEmailFormat.setVisible(false);
+		emailInputPanel.add(incorrectEmailFormat);
 		
 		buttonPanelOnSubscription = new JPanel();
 		buttonPanelOnSubscription.setBackground(Color.white);
@@ -378,6 +382,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			}
 			else
 			{
+				incorrectEmailFormat.setVisible(true);
 				
 			}
 		}
