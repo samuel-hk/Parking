@@ -103,8 +103,28 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	//---------------------Vehicle Information---------------------
 	
 	JPanel vehiclePane;
+	JLabel vehicleMakeLabel;
+	JTextField vehicleMakeInput;
+	JLabel vehicleModelLabel;
+	JTextField vehicleModelInput;
+	JPanel vehicleMakePane;
+	JPanel vehicleModelPane;
+	JPanel plateNumberPane;
+	JLabel plateNumberLabel;
+	JTextField plateNumberInput;
+	JLabel vehicleTitle;
+	JButton nextOnVehicle;
+	JButton previousOnVehicle;
+	JPanel buttonPaneOnVehicle;
 	
 	//-------------------------------------------------------------
+	
+	
+	//---------------------Insurance Information---------------------
+	JPanel insurancePane;
+	//---------------------------------------------------------------
+	
+	
 	
 	// keyboard panels
 	private JPanel numKeyboardPanel;
@@ -289,9 +309,73 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		vehiclePane = new JPanel();
 		vehiclePane.setPreferredSize(new Dimension(1200,700));
 		vehiclePane.setBackground(Color.white);
+		vehiclePane.setLayout(new GridLayout(7,1));
+		
+		vehicleTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
+		
+		vehiclePane.add(vehicleTitle);
+		//vehiclePane.add(displayName);
+		
+		vehicleMakeLabel = new JLabel("Vehicle Make");
+		vehicleMakeInput = new JTextField(15);
+		vehicleMakeInput.addActionListener(this);
+		vehicleModelLabel = new JLabel("Vehicle Model");
+		vehicleModelInput = new JTextField(15);
+		vehicleModelInput.addActionListener(this);
+		plateNumberLabel = new JLabel("Plate Number: ");
+		plateNumberInput = new JTextField(15);
+		plateNumberInput.addActionListener(this);
+				
+		vehicleMakePane = new JPanel();
+		vehicleMakePane.setBackground(Color.white);
+		vehicleMakePane.setLayout(new FlowLayout());
+		vehicleMakePane.add(vehicleMakeLabel);
+		vehicleMakePane.add(vehicleMakeInput);
+		
+		vehiclePane.add(vehicleMakePane);
+		
+		vehicleModelPane = new JPanel();
+		vehicleModelPane.setBackground(Color.white);
+		vehicleModelPane.setLayout(new FlowLayout());
+		vehicleModelPane.add(vehicleModelLabel);
+		vehicleModelPane.add(vehicleModelInput);
+		
+		vehiclePane.add(vehicleModelPane);
+		
+		plateNumberPane = new JPanel();
+		plateNumberPane.setBackground(Color.white);
+		plateNumberPane.setLayout(new FlowLayout());
+		plateNumberPane.add(plateNumberLabel);
+		plateNumberPane.add(plateNumberInput);
+		
+		vehiclePane.add(plateNumberPane);
+		
+		buttonPaneOnVehicle = new JPanel();
+		buttonPaneOnVehicle.setBackground(Color.white);
+		buttonPaneOnVehicle.setLayout(new GridLayout(1,2));
+		
+		//previous and next buttons
+		previousOnVehicle = new JButton(previous);
+		previousOnVehicle.addActionListener(this);
+		nextOnVehicle = new JButton(next);
+		nextOnVehicle.addActionListener(this);
+		
+		buttonPaneOnVehicle.add(previousOnVehicle);
+		buttonPaneOnVehicle.add(nextOnVehicle);
+		
+		vehiclePane.add(buttonPaneOnVehicle);
 		
 		
 		//-------------------------------------------------------------
+		
+		
+		//---------------------Insurance Information---------------------
+		insurancePane = new JPanel();
+		insurancePane.setPreferredSize(new Dimension(1200,700));
+		insurancePane.setBackground(Color.white);
+		//---------------------------------------------------------------
+		
+		//--------------------------
 
 		
 		
@@ -301,7 +385,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		//p2.add(PINLabel);
 		p2.setPreferredSize(new Dimension(1200,700));
 		p2.addTab("Subscribe", subscriptionPane);
-		p2.addTab("Vehicle Information",vehiclePane);
+		p2.addTab("My Vehicle",vehiclePane);
+		p2.addTab("Insurance",  insurancePane);
+		
 		
 		
 		
@@ -378,8 +464,17 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			else
 			{
 				incorrectEmailFormat.setVisible(true);
-				
 			}
+		}
+		else if(ae.getSource().equals(nextOnVehicle))
+		{
+			p2.setSelectedIndex(2);
+			this.pack();
+		}
+		else if(ae.getSource().equals(previousOnVehicle));
+		{
+			p2.setSelectedIndex(0);
+			this.pack();
 		}
 		
 		
