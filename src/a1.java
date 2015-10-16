@@ -480,6 +480,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		buttonPaneOnInsurance.setBackground(Color.white);
 		buttonPaneOnInsurance.setLayout(new GridLayout(1,2));
 		
+		// save default selection
+		selectedCompany = (String)companies.getSelectedItem();
+		companyString = selectedCompany;
 	
 		
 		//previous and next buttons
@@ -664,16 +667,22 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		expiryDatePanel.add(permitDurationBox);
 
 		// set up exipry day label
-		String exipryDateStr = getExpiryDate(1); // since defeault is same day parking
+		int dateInt = 1;// since defeault is same day parking
+		String exipryDateStr = getExpiryDate(dateInt); 
 		expiryDateLabel = new JLabel(exipryDateStr);
 		expiryDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		expiryDatePanel.add(expiryDateLabel);
 		
 		// setup price Label
-		String priceStr = getPriceStr(1);  // since default is sme day parking
+		String priceStr = getPriceStr(dateInt);  
 		priceLabel = new JLabel(priceStr);
 		priceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		expiryDatePanel.add(priceLabel);
+		
+		// save default price label
+		permitDurationString = dateInt+" Days";
+		expiryDateString = exipryDateStr;
+		amountPaidString = getPriceStr(dateInt);
 		
 		// setup note label
 		String noteStr = "Please note that the billing is automatically applied to your account.";
@@ -901,7 +910,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			// change exipry date based on slected date
 			String output = getExpiryDate(dateInt);
 			expiryDateLabel.setText(output);
-			expiryDateString = output;
+			expiryDateString = output; // here
 			
 			// update price based on selction
 			output = getPriceStr(dateInt);
