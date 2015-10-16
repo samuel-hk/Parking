@@ -365,9 +365,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		{
 			if(emailValid(emailInput.getText()))
 			{
-				remove(subscriptionPane);
-				setContentPane(vehiclePane);
-
+//				remove(subscriptionPane);
+//				setContentPane(vehiclePane);
+				p2.setSelectedIndex(1);
 				this.pack();
 				
 			}
