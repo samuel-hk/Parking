@@ -150,6 +150,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	JPanel companyInfoPane;
 	JPanel policyNumberPane;
 	JPanel buttonPaneOnInsurance;
+	JPanel insuranceKeyboardPanel;
 	
 	JLabel insuranceTitle;
 	JLabel displayNameOnInsurance;
@@ -448,11 +449,14 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		companyInfoPane.add(companies);
 		
 		
+		final int POLICYLIMIT = 9; // assuming the limit of a policy number is 9 digits
 		policyNumberPane = new JPanel();
 		policyNumberPane.setBackground(Color.white);
 		policyNumberPane.setLayout(new GridLayout(2,1));
 		policyNumberLabel = new JLabel("Policy Number: ");
 		policyNumberInput = new JTextField();
+		focusTextLimit.put(policyNumberInput, POLICYLIMIT);
+		policyNumberInput.addFocusListener(this);
 		policyNumberPane.add(policyNumberLabel);
 		policyNumberPane.add(policyNumberInput);
 		
@@ -470,20 +474,23 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		nextOnInsurance.addActionListener(this);
 		nextOnInsurance.setBorder(BorderFactory.createEmptyBorder());
 
-		
 		buttonPaneOnInsurance.add(previousOnInsurance);
 		buttonPaneOnInsurance.add(nextOnInsurance);
+		
+		insuranceKeyboardPanel = new JPanel();
 
+		final int INSURANCEPANELROW = 7;
 		insurancePane = new JPanel();
 		insurancePane.setPreferredSize(new Dimension(1200,700));
 		insurancePane.setBackground(Color.white);
-		insurancePane.setLayout(new GridLayout(6,1));
+		insurancePane.setLayout(new GridLayout(INSURANCEPANELROW,1));
 		
 		insurancePane.add(insuranceTitle);
 		insurancePane.add(displayNameInInsurance);
 		insurancePane.add(companyInfoPane);
 		insurancePane.add(policyNumberPane);
-		//add keyboard here
+		//add keyboard here------------------------------------------------------------------------------------ thx for the insturction emily
+		insurancePane.add(insuranceKeyboardPanel);
 		insurancePane.add(buttonPaneOnInsurance);
 		
 		
@@ -563,18 +570,27 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 	private void setKeyboardSymbolEnabled(boolean enable)
 	{
+		String regex = "[0-9a-zA-Z]+";
 		if (enable)
 		{
 			for (Map.Entry<JButton, String> entry : allKeyboardButtonMap.entrySet())
 			{
 				JButton b = entry.getKey();
 				String text = b.getText();
-//				if (text.mat)
+				if ( !text.matches(regex) )
+					b.setEnabled(true);
 			}
 		}
 		else
 		{
-			
+			for (Map.Entry<JButton, String> entry : allKeyboardButtonMap.entrySet())
+			{
+				JButton b = entry.getKey();
+				String text = b.getText();
+				if ( !text.matches(regex) )
+					b.setEnabled(false);
+			}
+
 		}
 		
 	} // end method setKeyboardSymbolEnabled
@@ -608,7 +624,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			else if (focusText != null && focusTextLimit.get(focusText) != null && focusTextLength < focusTextLimit.get(focusText) )
 				focusText.setText(focusTextValue + str);
 			// add input to other letter fields
-			else
+			else if (focusText != null && focusTextLimit.get(focusText) == null)
 				focusText.setText(focusTextValue + str);
 		}
 		// login button press
@@ -646,6 +662,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			{
 				subscriptionKeyboardPanel.remove(letterKeyboard);
 				vehicleKeyboardPane.add(letterKeyboard);
+				setKeyboardSymbolEnabled(false);
 				revalidate();
 				//				remove(subscriptionPane);
 				//				setContentPane(vehiclePane);
@@ -661,6 +678,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		else if(ae.getSource().equals(nextOnVehicle))
 		{
 			p2.setSelectedIndex(2);
+			p1.remove(numKeyboardPanel);
+			insuranceKeyboardPanel.add(numKeyboardPanel);
+			revalidate();
 			this.pack();
 		}
 		else if(ae.getSource().equals(previousOnVehicle))
@@ -668,6 +688,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			p2.setSelectedIndex(0);
 			vehicleKeyboardPane.remove(letterKeyboard);
 			subscriptionKeyboardPanel.add(letterKeyboard);
+			setKeyboardSymbolEnabled(true);
 			revalidate();
 			this.pack();
 		}
