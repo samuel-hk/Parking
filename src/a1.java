@@ -383,11 +383,11 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		p2.addChangeListener(this);
 		//p2.add(PINLabel);
 		p2.setPreferredSize(new Dimension(1400,800));
-		p2.addTab("Subscribe",icon, subscriptionPane);
+		p2.addTab("Subscribe", subscriptionPane);
 //		p2.addTab("Vehicle Information",vehiclePane);
-		p2.addTab("My Vehicle",icon,vehiclePane);
-		p2.addTab("Insurance",  icon,insurancePane);
-		p2.addTab("Expiry Date",icon, expiryDatePanel);
+		p2.addTab("My Vehicle",vehiclePane);
+		p2.addTab("Insurance", insurancePane);
+		p2.addTab("Expiry Date", expiryDatePanel);
 		
 		p2.setEnabledAt(1, false);
 		p2.setEnabledAt(2, false);
