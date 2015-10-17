@@ -741,7 +741,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		// save default price label
 		permitDurationString = dateInt+" Days";
 		expiryDateString = exipryDateStr;
-		amountPaidString = getPriceStr(dateInt);
+		amountPaidString = getPrice(dateInt);
 		
 		// setup note label
 		String noteStr = "Please note that the billing is automatically applied to your account.";
