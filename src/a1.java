@@ -571,11 +571,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 		
 
-		errorMessageOnVehicle = new JLabel("Please complete all three fields");
+		/*errorMessageOnVehicle = new JLabel("Please complete all three fields");
 		errorMessageOnVehicle.setBackground(Color.WHITE);
 		errorMessageOnVehicle.setForeground(Color.RED);
 		errorMessageOnVehicle.setFont(new Font("Serif", Font.BOLD, 30));
 		errorMessageOnVehicle.setHorizontalAlignment(JLabel.CENTER);
+		*/
 
 		// panel to hold input and related labels
 		final int inputPanelROW = 5;
@@ -631,8 +632,11 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		inputPanel.add(plateNumberPane);
 
 		errorMessageOnVehicle = new JLabel("Please complete all three fields");
-		errorMessageOnVehicle.setVisible(false);
-		inputPanel.add(errorMessageOnVehicle);
+		errorMessageOnVehicle.setForeground(Color.RED);
+		errorMessageOnVehicle.setFont(new Font("Serif", Font.BOLD, 30));
+		errorMessageOnVehicle.setHorizontalAlignment(JLabel.CENTER);
+		//errorMessageOnVehicle.setVisible(false);
+		//inputPanel.add(errorMessageOnVehicle);
 		
 		vehiclePane.add(inputPanel);
 		
