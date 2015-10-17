@@ -1,3 +1,4 @@
+//test
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -393,18 +394,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		p2.setEnabledAt(3, false);
 		
 		
-<<<<<<< HEAD
-		for (JButton b : letterButtonList)
-		{
-			int keyboardButtonSize = 20;
-			b.setPreferredSize(new Dimension(keyboardButtonSize, keyboardButtonSize));
-=======
 		int keyboardButtonWidth = 80;
 		int keyboardButtonHeight = 20;
 		for (JButton b : letterButtonList)
 		{
 			b.setPreferredSize(new Dimension(keyboardButtonWidth, keyboardButtonHeight));
->>>>>>> 5df3d276bb4565adb379f8213d1d9538958e833f
+
 		}
 		
 		
