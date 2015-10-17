@@ -218,6 +218,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private JPanel letterKeyboard;
 	
 	// keyboard map
+	private List<JButton> numButtonList;
 	private List<JButton> letterButtonList;
 
 	// to save the current focus input field
@@ -398,6 +399,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			b.setPreferredSize(new Dimension(keyboardButtonSize, keyboardButtonSize));
 		}
 		
+		
+		
 	} // end constructor
 	
 	private void setupSubscriptionPanel()
@@ -469,9 +472,10 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		errorMessageOnInsurance.setFont(new Font("Serif", Font.BOLD, 30));
 		errorMessageOnInsurance.setHorizontalAlignment(JLabel.CENTER);
 		
+		int companyInfoPaneRow = 3;
 		companyInfoPane = new JPanel();
 		companyInfoPane.setBackground(Color.white);
-		companyInfoPane.setLayout(new GridLayout(2,1));
+		companyInfoPane.setLayout(new GridLayout(companyInfoPaneRow,1));
 		
 		insuranceCompanyLabel = new JLabel("Please choose your insurance company: ");
 		companies = new JComboBox();
@@ -543,8 +547,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	{
 		
 		
-		final int VECHILEPANEROW = 5;
-		vehiclePane = new JPanel();
+		final int VECHILEPANEROW = 6;
+		vehiclePane = new JPanel(new GridLayout(VECHILEPANEROW, 1));
 		vehiclePane.setPreferredSize(new Dimension(1400,800));
 		vehiclePane.setBackground(Color.white);
 		/*GridLayout layoutVehiclePane = new GridLayout(VECHILEPANEROW,1);
@@ -565,12 +569,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		
 
 		errorMessageOnVehicle = new JLabel("Please complete all three fields");
+		errorMessageOnVehicle.setBackground(Color.WHITE);
 		errorMessageOnVehicle.setForeground(Color.RED);
 		errorMessageOnVehicle.setFont(new Font("Serif", Font.BOLD, 30));
 		errorMessageOnVehicle.setHorizontalAlignment(JLabel.CENTER);
 
 		// panel to hold input and related labels
-		final int inputPanelROW = 4;
+		final int inputPanelROW = 5;
 		//GridLayout layoutInputPanel = new GridLayout(inputPanelROW, 1);
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(Color.WHITE);
@@ -646,6 +651,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		nextOnVehicle.setBorder(BorderFactory.createEmptyBorder());
 
 		JPanel errorPanelOnVehicle = new JPanel();
+		errorPanelOnVehicle.setBackground(Color.white);
 		errorPanelOnVehicle.add(errorMessageOnVehicle);
 		buttonPaneOnVehicle.add(previousOnVehicle);
 		buttonPaneOnVehicle.add(nextOnVehicle);
@@ -786,7 +792,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			{
 				JButton b = entry.getKey();
 				String text = b.getText();
-				if ( !text.matches(regex) )
+				if ( !text.matches(regex) && !text.equals(" "))
 					b.setEnabled(false);
 			}
 
@@ -999,6 +1005,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private void cleanUp()
 	{
 		// clear login panel
+		p1.add(numKeyboardPanel);
+		p1.add(loginButton);
 		studentNumberInput.setText("");
 		PINInput.setText("");
 		incorrectLogin.setVisible(false);
@@ -1186,6 +1194,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 		// create map to hold keyboad data
 		allKeyboardButtonMap = new HashMap<>();
+		
+		// all button lsit
+		numButtonList = new ArrayList<>();
 
 		for (int i = 0 ; i < num.length; i++)
 		{
@@ -1199,8 +1210,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			} // end if create empty box
 
 			b.addActionListener(this);
+			
+			int size = 25;
+			int  width = 250;
+			b.setPreferredSize(new Dimension(width, size));
 
-
+			numButtonList.add(b);
 			allKeyboardButtonMap.put(b, num[i]);
 		} // end for add keys into keyboard
 
@@ -1220,7 +1235,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		String secondRow[] = {"Q","W","E","R","T","Y","U","I","O","P","{", "}", "[","]","|", "\\"};
 		String thirdRow[] = {"A","S","D","F","G","H","J","K","L",";",":", "\'", "\"","Enter"};
 		String fourthRow[] = {"Z","X","C","V","B","N","M","<", ">",",",".", "/", "?"};
-		String fifthRow[]={" " ,"<" ,"\\/",">" };
+//		String fifthRow[]={" " ,"<" ,"\\/",">" };
+		String fifthRow[]={" "};
 
 		// main letter keyboard panel
 		letterKeyboard = new JPanel(new GridLayout(rowNum, 1));
