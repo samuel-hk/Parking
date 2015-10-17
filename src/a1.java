@@ -1,4 +1,3 @@
-//test
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -230,6 +229,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 	public ParkingPermitKioskFrame()
 	{
+		
 		// input field properties
 		int inputWidth = 200;
 		int inputHeight = 50;
