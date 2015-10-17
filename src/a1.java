@@ -393,10 +393,18 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		p2.setEnabledAt(3, false);
 		
 		
+<<<<<<< HEAD
 		for (JButton b : letterButtonList)
 		{
 			int keyboardButtonSize = 20;
 			b.setPreferredSize(new Dimension(keyboardButtonSize, keyboardButtonSize));
+=======
+		int keyboardButtonWidth = 80;
+		int keyboardButtonHeight = 20;
+		for (JButton b : letterButtonList)
+		{
+			b.setPreferredSize(new Dimension(keyboardButtonWidth, keyboardButtonHeight));
+>>>>>>> 5df3d276bb4565adb379f8213d1d9538958e833f
 		}
 		
 		
@@ -859,6 +867,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				displayNameInInsurance.setText(displayNameString);
 				displayNameOnPermit.setText(displayNameString);
 				
+				emailInput.requestFocus();
 				
 				}
 			else
@@ -1004,6 +1013,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	
 	private void cleanUp()
 	{
+		setKeyboardSymbolEnabled(true);
+		
 		// clear login panel
 		p1.add(numKeyboardPanel);
 		p1.add(loginButton);
@@ -1383,10 +1394,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		{
 			case SUBPANELINDEX:
 				subscriptionKeyboardPanel.add(letterKeyboard);
+				setKeyboardSymbolEnabled(true);
+				emailInput.requestFocus();
 				pack();
 				break;
 			case VEHICLEINDEX:
 				vehicleKeyboardPane.add(letterKeyboard);
+				setKeyboardSymbolEnabled(false);
 				pack();
 				break;
 			case INSURANCEINDEX:
