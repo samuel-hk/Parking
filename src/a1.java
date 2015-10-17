@@ -714,6 +714,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		String todayStr = "Today: " + format.format(today);
 		todayLabel = new JLabel(todayStr);
 		todayLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		todayLabel.setFont(new Font("Serif", Font.BOLD, 16));
+
+		
 		
 		displayNameOnPermit.setForeground(Color.DARK_GRAY);
 		displayNameOnPermit.setFont(new Font("Serif", Font.BOLD, 25));
@@ -726,6 +729,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		// set up date selection label
 		String dateSelctionLabelStr = "Please select the number of dates you would like to purchase permit for";
 		JLabel dateSelctionLabel = new JLabel(dateSelctionLabelStr);
+		dateSelctionLabel.setFont(new Font("Serif", Font.BOLD, 16));
+
 		dateSelctionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		expiryDatePanel.add(dateSelctionLabel);
 
@@ -742,12 +747,16 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		int dateInt = 1;// since defeault is same day parking
 		String exipryDateStr = getExpiryDate(dateInt); 
 		expiryDateLabel = new JLabel(exipryDateStr);
+		expiryDateLabel.setFont(new Font("Serif", Font.BOLD, 16));
+
 		expiryDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		expiryDatePanel.add(expiryDateLabel);
 		
 		// setup price Label
 		String priceStr = getPriceStr(dateInt);  
 		priceLabel = new JLabel(priceStr);
+		priceLabel.setFont(new Font("Serif", Font.BOLD, 16));
+
 		priceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		expiryDatePanel.add(priceLabel);
 		
@@ -760,6 +769,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		String noteStr = "Please note that the billing is automatically applied to your account.";
 		JLabel noteLabel = new JLabel(noteStr);
 		expiryDatePanel.add(noteLabel);
+		noteLabel.setFont(new Font("Serif", Font.BOLD, 20));
 		
 		// setup button
 		buttonPanelOnPermit = new JPanel();
