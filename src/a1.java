@@ -72,6 +72,8 @@ public class a1
 
 class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusListener, ChangeListener
 {
+	// fields
+	
 	private JLabel studentNumberLabel;
 	JTextField studentNumberInput;
 	private JLabel PINLabel;
@@ -211,11 +213,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 	
 	
-	
-	
 	// keyboard panels
 	private JPanel numKeyboardPanel;
 	private JPanel letterKeyboard;
+	
+	// keyboard map
+	private List<JButton> numButtonList;
+	private List<JButton> letterButtonList;
 
 	// to save the current focus input field
 	private JTextField focusText;
@@ -389,6 +393,13 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		p2.setEnabledAt(3, false);
 		
 		
+		for (JButton b : letterButtonList)
+		{
+			int keyboardButtonSize = 20;
+			b.setPreferredSize(new Dimension(keyboardButtonSize, keyboardButtonSize));
+		}
+		
+		
 		
 	} // end constructor
 	
@@ -455,15 +466,16 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		insuranceTitle = new JLabel(new ImageIcon(yorkLogo.getImage().getScaledInstance(980, 193, Image.SCALE_SMOOTH)));
 		displayNameInInsurance = new JLabel();
 		
-		errorMessageOnInsurance = new JLabel("Please enter Policy Number");
+		errorMessageOnInsurance = new JLabel("Please enter valid 9 digits Policy Number");
 		errorMessageOnInsurance.setVisible(false);
 		errorMessageOnInsurance.setForeground(Color.RED);
 		errorMessageOnInsurance.setFont(new Font("Serif", Font.BOLD, 30));
 		errorMessageOnInsurance.setHorizontalAlignment(JLabel.CENTER);
 		
+		int companyInfoPaneRow = 3;
 		companyInfoPane = new JPanel();
 		companyInfoPane.setBackground(Color.white);
-		companyInfoPane.setLayout(new GridLayout(2,1));
+		companyInfoPane.setLayout(new GridLayout(companyInfoPaneRow,1));
 		
 		insuranceCompanyLabel = new JLabel("Please choose your insurance company: ");
 		companies = new JComboBox();
@@ -477,7 +489,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		companyInfoPane.add(companies);
 		
 		
-		final int POLICYLIMIT = 10; // assuming the limit of a policy number is 9 digits
+		final int POLICYLIMIT = 9; // assuming the limit of a policy number is 9 digits
 		policyNumberPane = new JPanel();
 		policyNumberPane.setBackground(Color.white);
 		policyNumberPane.setLayout(new GridLayout(2,1));
@@ -535,8 +547,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	{
 		
 		
-		final int VECHILEPANEROW = 8;
-		vehiclePane = new JPanel();
+		final int VECHILEPANEROW = 6;
+		vehiclePane = new JPanel(new GridLayout(VECHILEPANEROW, 1));
 		vehiclePane.setPreferredSize(new Dimension(1400,800));
 		vehiclePane.setBackground(Color.white);
 		/*GridLayout layoutVehiclePane = new GridLayout(VECHILEPANEROW,1);
@@ -554,15 +566,19 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		displayNameInVehicle.setHorizontalAlignment(JLabel.LEFT);
 		vehiclePane.add(displayNameInVehicle);
 		
+		
+
 		errorMessageOnVehicle = new JLabel("Please complete all three fields");
+		errorMessageOnVehicle.setBackground(Color.WHITE);
 		errorMessageOnVehicle.setForeground(Color.RED);
 		errorMessageOnVehicle.setFont(new Font("Serif", Font.BOLD, 30));
 		errorMessageOnVehicle.setHorizontalAlignment(JLabel.CENTER);
 
 		// panel to hold input and related labels
-		final int inputPanelROW = 3;
+		final int inputPanelROW = 5;
 		//GridLayout layoutInputPanel = new GridLayout(inputPanelROW, 1);
 		JPanel inputPanel = new JPanel();
+		inputPanel.setBackground(Color.WHITE);
 		BoxLayout layoutInputPanel = new BoxLayout(inputPanel,BoxLayout.Y_AXIS);
 
 		//layoutInputPanel.setVgap(20);
@@ -610,6 +626,11 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		plateNumberPane.add(plateNumberInput);
 		
 		inputPanel.add(plateNumberPane);
+
+		errorMessageOnVehicle = new JLabel("Please complete all three fields");
+		errorMessageOnVehicle.setVisible(false);
+		inputPanel.add(errorMessageOnVehicle);
+		
 		vehiclePane.add(inputPanel);
 		
 		// keyboard panel 
@@ -630,6 +651,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		nextOnVehicle.setBorder(BorderFactory.createEmptyBorder());
 
 		JPanel errorPanelOnVehicle = new JPanel();
+		errorPanelOnVehicle.setBackground(Color.white);
 		errorPanelOnVehicle.add(errorMessageOnVehicle);
 		buttonPaneOnVehicle.add(previousOnVehicle);
 		buttonPaneOnVehicle.add(nextOnVehicle);
@@ -725,7 +747,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		// save default price label
 		permitDurationString = dateInt+" Days";
 		expiryDateString = exipryDateStr;
-		amountPaidString = getPriceStr(dateInt);
+		amountPaidString = getPrice(dateInt);
 		
 		// setup note label
 		String noteStr = "Please note that the billing is automatically applied to your account.";
@@ -770,7 +792,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			{
 				JButton b = entry.getKey();
 				String text = b.getText();
-				if ( !text.matches(regex) )
+				if ( !text.matches(regex) && !text.equals(" "))
 					b.setEnabled(false);
 			}
 
@@ -816,6 +838,15 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			readStudentDatabase();
 			if(studentNumberInDatabase(studentNumberInput.getText())&&studentNumberAndPINMatches(studentNumberInput.getText(),PINInput.getText()))
 			{
+				// check for outstanding fines
+				if ( studentMap.get(studentNumberInput.getText()).get("status").equals("arrears") )
+				{
+					String title = "Unable to issue permit";
+					String message = "Due to outsanding fines on the account, the parking system cannot issue any parking permits. Please pay the account balance first";
+					JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
+					return;
+				} // end if, check out standing fines
+				
 				studentNumber = studentNumberInput.getText();
 				remove(p1);
 				setContentPane(p2);
@@ -839,7 +870,6 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 				incorrectLogin.setFont(new Font("Serif", Font.BOLD, fontSize));
 				incorrectLogin.setHorizontalAlignment(JLabel.CENTER);
 
-				//				JOptionPane.showMessageDialog(null, PINInput.getText(), "TITLE", JOptionPane.PLAIN_MESSAGE);
 			}
 
 		}
@@ -975,6 +1005,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 	private void cleanUp()
 	{
 		// clear login panel
+		p1.add(numKeyboardPanel);
+		p1.add(loginButton);
 		studentNumberInput.setText("");
 		PINInput.setText("");
 		incorrectLogin.setVisible(false);
@@ -1090,10 +1122,15 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 	public static boolean policyNumberValid(String policyNum)
 	{
-		if(policyNum.isEmpty())
-			return false;
-		else
+		String regex = "[0-9]{9}";
+		if (policyNum.matches(regex))
 			return true;
+		else
+			return false;
+//		if(policyNum.isEmpty())
+//			return false;
+//		else
+//			return true;
 	}
 	public static boolean studentNumberAndPINMatches(String studentNumberInput,String PINInput)
 	{
@@ -1157,6 +1194,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 		// create map to hold keyboad data
 		allKeyboardButtonMap = new HashMap<>();
+		
+		// all button lsit
+		numButtonList = new ArrayList<>();
 
 		for (int i = 0 ; i < num.length; i++)
 		{
@@ -1170,8 +1210,12 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			} // end if create empty box
 
 			b.addActionListener(this);
+			
+			int size = 25;
+			int  width = 250;
+			b.setPreferredSize(new Dimension(width, size));
 
-
+			numButtonList.add(b);
 			allKeyboardButtonMap.put(b, num[i]);
 		} // end for add keys into keyboard
 
@@ -1179,6 +1223,9 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 
 	private void setupLetterKeyboard()
 	{
+		// create letterButtonList to save everything button
+		letterButtonList = new ArrayList<>();
+		
 		// define keyboard properties
 		int rowNum = 6;
 
@@ -1188,7 +1235,8 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 		String secondRow[] = {"Q","W","E","R","T","Y","U","I","O","P","{", "}", "[","]","|", "\\"};
 		String thirdRow[] = {"A","S","D","F","G","H","J","K","L",";",":", "\'", "\"","Enter"};
 		String fourthRow[] = {"Z","X","C","V","B","N","M","<", ">",",",".", "/", "?"};
-		String fifthRow[]={" " ,"<" ,"\\/",">" };
+//		String fifthRow[]={" " ,"<" ,"\\/",">" };
+		String fifthRow[]={" "};
 
 		// main letter keyboard panel
 		letterKeyboard = new JPanel(new GridLayout(rowNum, 1));
@@ -1222,6 +1270,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			letterKeyboardPanel0.add(b);
 			allKeyboardButtonMap.put(b, zeroRow[i]);
 			b.addActionListener(this);
+			letterButtonList.add(b);
 		}
 		
 		for (int i = 0; i < firstRow.length; i++)
@@ -1230,6 +1279,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			letterKeyboardPanel1.add(button);
 			allKeyboardButtonMap.put(button, firstRow[i]);
 			button.addActionListener(this);
+			letterButtonList.add(button);
 		} // end for add first row
 
 		// add second row keyboard
@@ -1239,6 +1289,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			letterKeyboardPanel2.add(b);
 			allKeyboardButtonMap.put(b, secondRow[i]);
 			b.addActionListener(this);
+			letterButtonList.add(b);
 		} // end for add second row
 
 		// add third row keyboard
@@ -1248,6 +1299,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			letterKeyboardPanel3.add(b);
 			allKeyboardButtonMap.put(b, thirdRow[i]);
 			b.addActionListener(this);
+			letterButtonList.add(b);
 		} // end for add third row
 
 		// add forth row keyboard
@@ -1257,6 +1309,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			letterKeyboardPanel4.add(b);
 			allKeyboardButtonMap.put(b, fourthRow[i]);
 			b.addActionListener(this);
+			letterButtonList.add(b);
 		} // end for add 4th row
 
 		// add 5th row keyboard
@@ -1266,6 +1319,7 @@ class ParkingPermitKioskFrame extends JFrame implements ActionListener, FocusLis
 			letterKeyboardPanel5.add(b);
 			allKeyboardButtonMap.put(b, fifthRow[i]);
 			b.addActionListener(this);
+			letterButtonList.add(b);
 		} // end for add 4th row
 
 
